@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
-import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import React, { Component, useEffect, useState } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
 import * as firebase from 'firebase';
 //ajusteMarvin usar env
 const firebaseConfig = {
@@ -17,69 +17,53 @@ if (firebase.apps.length === 0) {
 }
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Landing from './componentes/autenticacao/Landing';
-import Cadastrar from './componentes/autenticacao/Cadastrar';
+import LoginTela from './scr/paginas/login/Login';
+import CadastrarTela from './scr/paginas/cadastrar/Cadastrar';
+import HomeTela from './scr/paginas/home/Home';
 
 const Stack = createStackNavigator();
 
-export class App extends Component {
-	constructor(props) {
-		super(props);
+const App = () => {
+	const [carregada, mudarCarregada] = useState(false);
+	const [logado, mudarLogado] = useState(false);
 
-		this.state = {
-			carregada: false
-		}
-	}
-
-	componentDidMount() {
+	useEffect(() => {
 		firebase.auth().onAuthStateChanged((user) => {
 			if (!user) {
-				this.setState({
-					logado: false,
-					carregada: true
-				})
+				mudarCarregada(true);
+				mudarLogado(false);
 			} else {
-				this.setState({
-					logado: true,
-					carregada: true
-				})
+				mudarCarregada(true);
+				mudarLogado(true);
 			}
 		})
-	}
+	}, []);
 
-	render() {
-		const { logado, carregada } = this.state;
-		if (!carregada) {
-			return (
+	return (
+		<>
+			{!carregada ? 
 				<View style={{				
 					flex: 1,
 					justifyContent: 'center'
 				}}>
-					<Text>Carregando</Text>
+					<ActivityIndicator size="large" color="#00ff00" />
 				</View>
-			)
-		}
-
-		if (!logado) {
-			return (
+			:!logado ?
 				<NavigationContainer>
-					<Stack.Navigator initialRouteName="Landing">
-						<Stack.Screen name="Landing" component={Landing} options={{headerShown: false}} />
-						<Stack.Screen name="Cadastrar" component={Cadastrar} />
+					<Stack.Navigator initialRouteName="Login">
+						<Stack.Screen name="Login" component={LoginTela} options={{headerShown: false}} />
+						<Stack.Screen name="Cadastrar" component={CadastrarTela} />
 					</Stack.Navigator>
 				</NavigationContainer>
-			);
-		}
-		
-		return (
-			<View style={{				
-				flex: 1,
-				justifyContent: 'center'
-			}}>
-				<Text>Usuário logado!</Text>
-			</View>
-		)
-	}
+			:
+				<NavigationContainer>
+					<Stack.Navigator initialRouteName="Home">
+						<Stack.Screen name="Home" component={HomeTela} options={{headerShown: false}} />
+					</Stack.Navigator>
+				</NavigationContainer>
+			}
+		</>
+	)
 }
 
 export default App;
