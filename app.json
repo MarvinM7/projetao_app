@@ -25,7 +25,12 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.projetao.app",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleSignIn": {
+            "certificateHash": "F5:AF:87:B6:E9:FF:3E:9A:BE:D1:23:A4:8A:5E:32:D4:FF:00:BB:E5"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

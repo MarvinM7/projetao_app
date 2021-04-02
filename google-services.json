@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "258349071067",
-    "project_id": "projetao-app",
-    "storage_bucket": "projetao-app.appspot.com"
+    "project_number": "337650844872",
+    "project_id": "projetao-app-v1",
+    "storage_bucket": "projetao-app-v1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:258349071067:android:e3adf661433bd48835aafe",
+        "mobilesdk_app_id": "1:337650844872:android:cd1b27c001b658583751fd",
         "android_client_info": {
           "package_name": "com.projetao.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "258349071067-sktsb3id9gjtsh4upt13qb9ribjatbku.apps.googleusercontent.com",
+          "client_id": "337650844872-jjulte1tu1g1tooov0nve7j19sejhchf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.projetao.app",
-            "certificate_hash": "f5af87b6e9ff3e9abed123a48a5e32d4ff00bbe5"
+            "certificate_hash": "de8f340a36a01428eecd49fa1164bf4baee15168"
           }
         },
         {
-          "client_id": "258349071067-upfgi7hj5a8f6e76a31krk17i0kmgo9v.apps.googleusercontent.com",
+          "client_id": "337650844872-afos2hpscbpglou6h8vva2mpe0ut6dqh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA0lXi6jT0nDPLYPfyJQ7kj8B4ismnrBRw"
+          "current_key": "AIzaSyBJbUwd60FEqxRX6x5lHAl2Xof1x7ZN1Ps"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "258349071067-upfgi7hj5a8f6e76a31krk17i0kmgo9v.apps.googleusercontent.com",
+              "client_id": "337650844872-afos2hpscbpglou6h8vva2mpe0ut6dqh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
