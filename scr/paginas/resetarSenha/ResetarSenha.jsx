@@ -1,63 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import firebase from 'firebase';
 
-const CadastrarTela = () => {
-    const [nome, mudarNome] = useState('');
+const ResetarSenhaTela = ({ navigation }) => {
     const [email, mudarEmail] = useState('');
-    const [senha, mudarSenha] = useState('');
     const [carregada, mudarCarregada] = useState(true);
 
-    const cadastrar = () => {
+    const resetarSenha = () => {
         mudarCarregada(false);
-        firebase.auth().createUserWithEmailAndPassword(email, senha)
-        .then((usuario) => {
-            firebase.firestore().collection('usuarios')
-                .doc(firebase.auth().currentUser.uid)
-                .set({
-                    nome,
-                    email
-                })
-            usuario.user.updateProfile({
-                displayName: nome
-            })
+        firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+            navigation.navigate('Login');
         })
         .catch((resposta) => {
             mudarCarregada(true);
-            console.log(resposta)
+            console.log(resposta);
         })
-    }    
+    }
 
     return (
-        <View
-            style={styles.container}
-        >
+        <View style={styles.container}>
             {carregada?
                 <>
-                    <TextInput 
-                        placeholder="Nome"
-                        onChangeText={(nome) => mudarNome(nome)}
-                        style={styles.textInput}
-                    />
                     <TextInput 
                         placeholder="E-mail"
                         onChangeText={(email) => mudarEmail(email)}
                         style={styles.textInput}
                     />
-                    <TextInput 
-                        placeholder="Senha"
-                        onChangeText={(senha) => mudarSenha(senha)}
-                        style={styles.textInput}
-                        secureTextEntry={true}
-                    />
                     <TouchableOpacity
-                        onPress={() => cadastrar()}
+                        onPress={() => resetarSenha()}
                         style={styles.button}
                     >
                         <Text
                             style={styles.textButton}
                         >
-                            Cadastrar
+                            Resetar senha
                         </Text>
                     </TouchableOpacity>
                 </>
@@ -90,4 +67,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default CadastrarTela;
+export default ResetarSenhaTela;

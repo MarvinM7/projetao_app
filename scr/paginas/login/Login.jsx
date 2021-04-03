@@ -11,7 +11,7 @@ const LoginTela = ({ navigation }) => {
     const logar = () => {
         firebase.auth().signInWithEmailAndPassword(email, senha)
         .then((resposta) => {
-            console.log(resposta)
+            
         })
         .catch((resposta) => {
             console.log(resposta)
@@ -55,6 +55,13 @@ const LoginTela = ({ navigation }) => {
                     style={styles.textButton}
                 >
                     LOGAR
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('ResetarSenha')}
+            >
+                <Text>
+                    Esqueci a senha
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity

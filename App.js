@@ -1,25 +1,21 @@
 import 'react-native-gesture-handler';
-import React, { Component, useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import * as firebase from 'firebase';
-//ajusteMarvin usar env
-const firebaseConfig = {
-	apiKey: "AIzaSyAN413bAgPWMZ86wNpoDMb2XXufjmBdPZQ",
-	authDomain: "projetao-app-v1.firebaseapp.com",
-	projectId: "projetao-app-v1",
-	storageBucket: "projetao-app-v1.appspot.com",
-	messagingSenderId: "337650844872",
-	appId: "1:337650844872:web:7d8eb49a18792b8e3751fd",
-	measurementId: "G-Q25827LZ0T"
-};
-if (firebase.apps.length === 0) {
-	firebase.initializeApp(firebaseConfig);
-}
+import 'firebase/firestore';
+import firebaseConfig from './scr/config/firebase';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import Reducers from './scr/redux/reducers/Reducers';
+import thunk from 'redux-thunk';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginTela from './scr/paginas/login/Login';
 import CadastrarTela from './scr/paginas/cadastrar/Cadastrar';
-import HomeTela from './scr/paginas/home/Home';
+import DashboardTela from './scr/paginas/dashboard/Dashboard';
+import ResetarSenhaTela from './scr/paginas/resetarSenha/ResetarSenha';
+
+const store = createStore(Reducers, applyMiddleware(thunk))
 
 const Stack = createStackNavigator();
 
@@ -28,6 +24,9 @@ const App = () => {
 	const [logado, mudarLogado] = useState(false);
 
 	useEffect(() => {
+		if (firebase.apps.length === 0) {
+			firebase.initializeApp(firebaseConfig);
+		}
 		firebase.auth().onAuthStateChanged((user) => {
 			if (!user) {
 				mudarCarregada(true);
@@ -53,14 +52,17 @@ const App = () => {
 					<Stack.Navigator initialRouteName="Login">
 						<Stack.Screen name="Login" component={LoginTela} options={{headerShown: false}} />
 						<Stack.Screen name="Cadastrar" component={CadastrarTela} />
+						<Stack.Screen name="ResetarSenha" component={ResetarSenhaTela} options={{title: 'Resetar a senha'}} />
 					</Stack.Navigator>
 				</NavigationContainer>
 			:
-				<NavigationContainer>
-					<Stack.Navigator initialRouteName="Home">
-						<Stack.Screen name="Home" component={HomeTela} options={{headerShown: false}} />
-					</Stack.Navigator>
-				</NavigationContainer>
+				<Provider store={store}>
+					<NavigationContainer>
+						<Stack.Navigator initialRouteName="Dashboard">
+							<Stack.Screen name="Dashboard" component={DashboardTela} options={{headerShown: false}} />
+						</Stack.Navigator>
+					</NavigationContainer>
+				</Provider>
 			}
 		</>
 	)
