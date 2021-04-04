@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import firebase from 'firebase';
 
 const CadastrarTela = () => {
@@ -29,9 +31,10 @@ const CadastrarTela = () => {
     }    
 
     return (
-        <View
+        <SafeAreaView
             style={styles.container}
         >
+            <StatusBar style="auto" />
             {carregada?
                 <>
                     <TextInput 
@@ -64,7 +67,7 @@ const CadastrarTela = () => {
             :
                 <ActivityIndicator size="large" color="#00ff00" />
             }
-        </View>
+        </SafeAreaView>
     )
 }
 

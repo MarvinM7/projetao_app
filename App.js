@@ -1,5 +1,8 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, View } from 'react-native';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
@@ -12,8 +15,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginTela from './scr/paginas/login/Login';
 import CadastrarTela from './scr/paginas/cadastrar/Cadastrar';
-import DashboardTela from './scr/paginas/dashboard/Dashboard';
 import ResetarSenhaTela from './scr/paginas/resetarSenha/ResetarSenha';
+import RotasLogado from './scr/paginas/RotasLogado';
 
 const store = createStore(Reducers, applyMiddleware(thunk))
 
@@ -39,14 +42,15 @@ const App = () => {
 	}, []);
 
 	return (
-		<>
+		<SafeAreaProvider>
 			{!carregada ? 
-				<View style={{				
+				<SafeAreaView style={{				
 					flex: 1,
 					justifyContent: 'center'
 				}}>
+					<StatusBar style="auto" />
 					<ActivityIndicator size="large" color="#00ff00" />
-				</View>
+				</SafeAreaView>
 			:!logado ?
 				<NavigationContainer>
 					<Stack.Navigator initialRouteName="Login">
@@ -58,13 +62,13 @@ const App = () => {
 			:
 				<Provider store={store}>
 					<NavigationContainer>
-						<Stack.Navigator initialRouteName="Dashboard">
-							<Stack.Screen name="Dashboard" component={DashboardTela} options={{headerShown: false}} />
+						<Stack.Navigator initialRouteName="RotasLogado">
+							<Stack.Screen name="RotasLogado" component={RotasLogado} options={{headerShown: false}} />
 						</Stack.Navigator>
 					</NavigationContainer>
 				</Provider>
 			}
-		</>
+		</SafeAreaProvider>
 	)
 }
 

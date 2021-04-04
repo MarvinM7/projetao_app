@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import firebase from 'firebase';
 import * as GoogleSignIn from 'expo-google-sign-in';
 
@@ -35,7 +37,8 @@ const LoginTela = ({ navigation }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <StatusBar style="auto" />
             <TextInput 
                 placeholder="E-mail"
                 onChangeText={(email) => mudarEmail(email)}
@@ -84,7 +87,7 @@ const LoginTela = ({ navigation }) => {
                     Cadastre-se
                 </Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     )
 }
 
