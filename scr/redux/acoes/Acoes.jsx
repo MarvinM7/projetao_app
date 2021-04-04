@@ -14,7 +14,33 @@ export function buscarUsuario() {
                         usuarioAtual: snapshot.data()
                     })
                 } else {
-                    console.log('Não existe');
+                    let { displayName, email } = firebase.auth().currentUser;
+                    firebase.firestore().collection('usuarios')
+                        .doc(firebase.auth().currentUser.uid)
+                        .set({
+                            nome: displayName,
+                            email
+                        })
+                        .then(() => {
+                            firebase.firestore()
+                                .collection('usuarios')
+                                .doc(firebase.auth().currentUser.uid)
+                                .get()
+                                .then((snapshot) => {
+                                    if (snapshot.exists) {
+                                        dispatch({
+                                            type: USER_STATE_CHANGE,
+                                            usuarioAtual: snapshot.data()
+                                        })
+                                    }
+                                })
+                                .catch((resposta) => {
+                                    console.log(resposta);
+                                })
+                        })
+                        .catch((resposta) => {
+                            console.log(resposta);
+                        })
                 }
             })
             .catch((resposta) => {
