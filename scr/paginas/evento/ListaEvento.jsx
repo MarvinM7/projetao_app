@@ -23,6 +23,28 @@ const ListaEventoTela = (props) => {
                     evento.estabelecimento.get()
                     .then((estabelecimento) => {
                         evento.estabelecimentoInformacoes = estabelecimento.data();
+                        let dia = evento.data.toDate().getDate();
+                        if (dia < 10) {
+                            dia = '0' + dia;
+                        }
+                        let mes = evento.data.toDate().getMonth();
+                        if (mes < 10) {
+                            mes = '0' + mes;
+                        }
+                        let ano = evento.data.toDate().getFullYear();
+                        let hora = evento.data.toDate().getHours();
+                        if (hora < 10) {
+                            hora = '0' + hora;
+                        }
+                        let minuto = evento.data.toDate().getMinutes();
+                        if (minuto < 10) {
+                            minuto = '0' + minuto;
+                        }
+                        let segundo = evento.data.toDate().getSeconds();
+                        if (segundo < 10) {
+                            segundo = '0' + segundo;
+                        }
+                        evento.data = dia + '/' + mes + '/' + ano + ' ' + hora + ':' + minuto + ':' + segundo;
                         lista.push(evento);
                         mudarListaEvento(lista);
                     })
@@ -50,7 +72,7 @@ const ListaEventoTela = (props) => {
         >
             <Text style={styles.title}>{`Evento: ${item.nome}`}</Text>
             <Text style={styles.title}>{`Local: ${item.estabelecimentoInformacoes.nome}`}</Text>
-            <Text style={styles.title}>{`Dia/Hora: ${item.data.toDate().toLocaleString('en-GB')}`}</Text>
+            <Text style={styles.title}>{`Dia/Hora: ${item.data}`}</Text>
         </TouchableOpacity>
     );
 
