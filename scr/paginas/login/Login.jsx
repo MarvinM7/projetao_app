@@ -1,26 +1,76 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import firebase from 'firebase';
 import * as GoogleSignIn from 'expo-google-sign-in';
+import { Button, TextInput } from 'react-native-paper';
 
-const LoginTela = ({ navigation }) => {
+const LoginTela = (props) => {
     const [email, mudarEmail] = useState('');
+    const [erroEmail, mudarErroEmail] = useState(false);
     const [senha, mudarSenha] = useState('');
-    const [mensagem, mudarMensagem] = useState('');
+    const [erroSenha, mudarErroSenha] = useState(false);
+    const [mensagemErro, mudarMensagemErro] = useState('');
+    const [mostrarModal, mudarMostrarModal] = useState(false);
+    const [botaoCarregando, mudarBotaoCarregando] = useState(false);
+    const [botaoGoogleCarregando, mudarBotaoGoogleCarregando] = useState(false);
 
     const logar = () => {
-        firebase.auth().signInWithEmailAndPassword(email, senha)
-        .then((resposta) => {
-            
-        })
-        .catch((resposta) => {
-            console.log(resposta)
-        })
+        mudarBotaoCarregando(true);
+        let verificador = true;
+        if (email === '') {
+            verificador = false;
+            mudarErroEmail(true);
+        }
+
+        if (senha === '') {
+            verificador = false;
+            mudarErroSenha(true);
+        }
+
+        if (verificador) {
+            firebase.auth().signInWithEmailAndPassword(email, senha)
+                .then((resposta) => {
+                    
+                })
+                .catch((resposta) => {
+                    mudarMostrarModal(true);
+                    mudarBotaoCarregando(false);
+                    switch(resposta.code) {
+                        case 'auth/user-not-found':
+                            mudarMensagemErro('Usuário não encontrado.');
+                            mudarErroEmail(true);
+                            break;
+                        case 'auth/wrong-password':
+                            mudarMensagemErro('Senha errada.');
+                            mudarErroSenha(true);
+                            break;
+                        case 'auth/invalid-email':
+                            mudarMensagemErro('E-mail inválido.');
+                            mudarErroEmail(true);
+                            break;
+                        default:
+                            null
+                    }
+                })
+        } else {
+            mudarBotaoCarregando(false);
+        }
+    }
+
+    const mudarEmailFuncao = (texto) => {
+        mudarErroEmail(false);
+        mudarEmail(texto);
+    }
+
+    const mudarSenhaFuncao = (texto) => {
+        mudarErroSenha(false);
+        mudarSenha(texto);
     }
 
     const logarComGoogle = async () => {
+        mudarBotaoGoogleCarregando(true);
         try {
             await GoogleSignIn.askForPlayServicesAsync();
             const { type, user } = await GoogleSignIn.signInAsync();
@@ -29,9 +79,11 @@ const LoginTela = ({ navigation }) => {
                 const credential = firebase.auth.GoogleAuthProvider.credential(user.auth.idToken, user.auth.accessToken);
                 const googleProfileData = await firebase.auth().signInWithCredential(credential);
             }
+            mudarBotaoGoogleCarregando(false);
             return {success: true};
-        } catch ({ message }) {
-            mudarMensagem(message);
+        } catch (message) {
+            mudarMensagemErro(message);
+            mudarBotaoGoogleCarregando(false);
             return {success: false, data: message};
         }
     }
@@ -39,49 +91,82 @@ const LoginTela = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={mostrarModal}
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>
+                            {mensagemErro}
+                        </Text>
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            onPress={() => {
+                                mudarMostrarModal(false);
+                            }}
+                        >
+                            <Text style={styles.textStyle}>Fechar aviso</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            </Modal>
+            <View
+                style={{width: 100, height: 100, backgroundColor: '#2196F3', marginBottom: 30}}
+            >
+
+            </View>
             <TextInput 
-                placeholder="E-mail"
-                onChangeText={(email) => mudarEmail(email)}
+                label="E-mail"
+                mode="outlined"
+                value={email}
+                onChangeText={(email) => mudarEmailFuncao(email)}
                 style={styles.textInput}
+                error={erroEmail}
             />
             <TextInput 
-                placeholder="Senha"
-                onChangeText={(senha) => mudarSenha(senha)}
+                label="Senha"
+                mode="outlined"
+                value={senha}
+                onChangeText={(senha) => mudarSenhaFuncao(senha)}
                 style={styles.textInput}
                 secureTextEntry={true}
+                error={erroSenha}
             />
-            <TouchableOpacity
+            <Button
+                mode={'contained'}
                 onPress={() => logar()}
+                style={{width: '80%', marginTop: 10}}
+                loading={botaoCarregando}
+            >
+                LOGAR
+            </Button>
+            <TouchableOpacity
+                onPress={() => props.navigation.navigate('ResetarSenha')}
                 style={styles.button}
             >
                 <Text
-                    style={styles.textButton}
+                    style={{alignSelf: 'flex-end'}}
                 >
-                    LOGAR
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('ResetarSenha')}
-            >
-                <Text>
                     Esqueci a senha
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            <Button
+                mode={'contained'}
+                icon={'google'}
                 onPress={() => logarComGoogle()}
-                style={styles.button}
+                style={{width: '80%', marginVertical: 20}}
+                loading={botaoGoogleCarregando}
             >
-                <Text
-                    style={styles.textButton}
-                >
-                    Entrar com Google
-                </Text>
-            </TouchableOpacity>
-            <Text>
-                {mensagem}
-            </Text>
+                ENTRAR COM GOOGLE
+            </Button>
             <TouchableOpacity
-                onPress={() => navigation.navigate('Cadastrar')}
+                onPress={() => props.navigation.navigate('Cadastrar')}
+                style={{marginVertical: 20}}
             >
                 <Text>
                     Cadastre-se
@@ -103,14 +188,49 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        width: '80%',
-        backgroundColor: "#2196F3",
-        alignItems: "center",
+        width: '80%'
     },
 
-    textButton: {
-        color: '#FFF'
-    }
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+
+    openButton: {
+        backgroundColor: '#F194FF',
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
 });
 
 export default LoginTela;

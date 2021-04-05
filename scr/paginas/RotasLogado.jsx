@@ -6,6 +6,7 @@ import { buscarUsuario, logOut } from '../redux/acoes/Acoes';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardTela from './dashboard/Dashboard';
 import ListaEventoTela from './evento/ListaEvento';
+import TesteTela from './teste/Teste';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
@@ -37,6 +38,21 @@ const RotasLogado = (props) => {
                 options={
                     {
                         title: 'Lista de Eventos',
+                        headerShown: false,
+                        tabBarIcon: ({ color, size }) => {
+                            return (
+                                <Ionicons name="list" color={color} size={26} />
+                            )
+                        }
+                    }
+                }
+            />
+            <Tab.Screen
+                name="Teste"
+                component={TesteTela}
+                options={
+                    {
+                        title: 'Teste',
                         headerShown: false,
                         tabBarIcon: ({ color, size }) => {
                             return (
