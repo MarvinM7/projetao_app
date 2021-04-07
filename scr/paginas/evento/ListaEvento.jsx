@@ -5,7 +5,8 @@ import { ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacit
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 const ListaEventoTela = (props) => {
     const [listaEvento, mudarListaEvento] = useState([]);

@@ -18,6 +18,11 @@ import LoginTela from './scr/paginas/login/Login';
 import CadastrarTela from './scr/paginas/cadastrar/Cadastrar';
 import ResetarSenhaTela from './scr/paginas/resetarSenha/ResetarSenha';
 import RotasLogado from './scr/paginas/RotasLogado';
+import GenerosFavoritosTela from './scr/paginas/generosFavoritos/GenerosFavoritos';
+import GenerosFavoritosPrimeiroAcessoTela from './scr/paginas/generosFavoritos/GenerosFavoritosPrimeiroAcesso';
+import LivrosFavoritosTela from './scr/paginas/livrosFavoritos/LivrosFavoritos';
+import AtualizarLivrosFavoritosTela from './scr/paginas/livrosFavoritos/AtualizarLivrosFavoritos';
+//import { LogBox } from 'react-native';
 
 const store = createStore(Reducers, applyMiddleware(thunk));
 
@@ -35,8 +40,10 @@ const theme = {
 const App = () => {
 	const [carregada, mudarCarregada] = useState(false);
 	const [logado, mudarLogado] = useState(false);
+	const [rotaLogado, mudarRotaLogado] = useState('RotasLogado');
 
 	useEffect(() => {
+		//LogBox.ignoreLogs(['Setting a timer']);
 		if (firebase.apps.length === 0) {
 			firebase.initializeApp(firebaseConfig);
 		}
@@ -45,8 +52,22 @@ const App = () => {
 				mudarCarregada(true);
 				mudarLogado(false);
 			} else {
-				mudarCarregada(true);
-				mudarLogado(true);
+				firebase.firestore().collection('usuarios')
+					.doc(firebase.auth().currentUser.uid).get()
+					.then((snapshot) => {
+						if (snapshot.exists) {
+							if (snapshot.data().primeiro_acesso) {
+								mudarRotaLogado('GenerosFavoritosPrimeiroAcesso');
+							} else {
+								mudarRotaLogado('RotasLogado');
+							}
+							mudarLogado(true);
+							mudarCarregada(true);
+						}
+					})
+					.catch((resposta) => {
+						console.log(resposta);
+					})
 			}
 		})
 	}, []);
@@ -77,8 +98,12 @@ const App = () => {
 				<Provider store={store}>
 					<PaperProvider theme={theme}>
 						<NavigationContainer>
-							<Stack.Navigator initialRouteName="RotasLogado">
+							<Stack.Navigator initialRouteName={rotaLogado}>
 								<Stack.Screen name="RotasLogado" component={RotasLogado} options={{headerShown: false}} />
+								<Stack.Screen name="GenerosFavoritosPrimeiroAcesso" component={GenerosFavoritosPrimeiroAcessoTela} options={{headerShown: false}} />
+								<Stack.Screen name="GenerosFavoritos" component={GenerosFavoritosTela} options={{title: 'Meus gêneros favoritos'}} />
+								<Stack.Screen name="LivrosFavoritos" component={LivrosFavoritosTela} options={{title: 'Meus livros favoritos'}} />
+								<Stack.Screen name="AtualizarLivrosFavoritos" component={AtualizarLivrosFavoritosTela} options={{title: 'Atualizar livros favoritos'}} />
 							</Stack.Navigator>
 						</NavigationContainer>
 					</PaperProvider>

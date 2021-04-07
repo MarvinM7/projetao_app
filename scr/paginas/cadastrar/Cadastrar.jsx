@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 const CadastrarTela = () => {
     const [nome, mudarNome] = useState('');
@@ -18,7 +19,8 @@ const CadastrarTela = () => {
                 .doc(firebase.auth().currentUser.uid)
                 .set({
                     nome,
-                    email
+                    email,
+                    primeiro_acesso: true
                 })
             usuario.user.updateProfile({
                 displayName: nome

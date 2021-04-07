@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
-import firebase from 'firebase';
+import { Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import * as GoogleSignIn from 'expo-google-sign-in';
 import { Button, TextInput } from 'react-native-paper';
 

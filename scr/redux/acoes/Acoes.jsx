@@ -1,5 +1,6 @@
 import { USER_STATE_CHANGE } from '../constantes/Constantes';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 export function buscarUsuario() {
     return((dispatch) => {
