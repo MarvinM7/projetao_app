@@ -96,8 +96,8 @@ const GenerosFavoritosPrimeiroAcessoTela = (props) => {
         <SafeAreaView style={[styles.container]}>
             {paginaCarregada?
                 <>
-                    <Title style={{color: colors.primary}}>Marque os gêneros que você curte</Title>
-                    <View style={{width: '100%', height: window.height - 40}}>
+                    <Title style={{flex: 1, color: colors.primary}}>Marque os gêneros que você curte</Title>
+                    <View style={{flex: 10, width: '100%'}}>
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
@@ -109,7 +109,7 @@ const GenerosFavoritosPrimeiroAcessoTela = (props) => {
                                     mode="contained"
                                     onPress={() => salvar()}
                                     loading={botaoCarregando}
-                                    style={{width: '90%', alignSelf: 'center'}}
+                                    style={{width: '90%', alignSelf: 'center', marginBottom: 10}}
                                 >
                                     SALVAR
                                 </Button>

@@ -16,6 +16,7 @@ const GenerosFavoritosTela = (props) => {
     const [paginaCarregada, mudarPaginaCarregada] = useState(false);
     const [listaGeneros, mudarlistaGeneros] = useState([]);
     const [botaoCarregando, mudarBotaoCarregando] = useState(false);
+    const [botaoPularCarregando, mudarBotaoPularCarregando] = useState(false);
     const window = Dimensions.get('window');
     const db = firebase.firestore();
     
@@ -51,7 +52,7 @@ const GenerosFavoritosTela = (props) => {
     }
 
     const salvar = () => {
-        mudarBotaoCarregando(true)
+        mudarBotaoCarregando(true);
         let listaGenerosMarcados = [];
         listaGeneros.forEach((genero) => {
             if (genero.marcado) {
@@ -75,6 +76,7 @@ const GenerosFavoritosTela = (props) => {
     }
 
     const pular = () => {
+        mudarBotaoPularCarregando(true);
         db.collection('usuarios').doc(firebase.auth().currentUser.uid).update({
             primeiro_acesso: false
         })
@@ -134,7 +136,7 @@ const GenerosFavoritosTela = (props) => {
                             <Button
                                 mode="text"
                                 onPress={() => pular()}
-                                loading={botaoCarregando}
+                                loading={botaoPularCarregando}
                                 color={colors.primary}
                             >
                                 PULAR

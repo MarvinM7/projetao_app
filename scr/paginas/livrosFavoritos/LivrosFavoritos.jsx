@@ -22,15 +22,6 @@ const LivrosFavoritosTela = (props) => {
     useEffect(() => {
         //LogBox.ignoreLogs(['Setting a timer']);
         props.buscarUsuario();
-        const unsubscribe = props.navigation.addListener('focus', () => {
-            montarPagina();
-        });
-        return unsubscribe;
-    }, []);
-
-    const montarPagina = () => {
-        mudarPaginaCarregada(false);
-        props.buscarUsuario();
         //ordenar por ordem alfabética
         console.log('teste');
         console.log(props.usuarioAtual.livros.length)
@@ -55,7 +46,7 @@ const LivrosFavoritosTela = (props) => {
             mudarlistaLivros([]);
             mudarPaginaCarregada(true);
         }
-    }
+    }, []);
 
     const exluirLivroFavorito = (livro) => {
         mudarPaginaCarregada(false);
@@ -143,7 +134,6 @@ const LivrosFavoritosTela = (props) => {
                             />
                         </View>
                     }
-                    
                 </>
             :
                 <ActivityIndicator size="large" color="#00ff00" />

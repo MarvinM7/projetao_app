@@ -36,8 +36,6 @@ const LoginTela = (props) => {
                     
                 })
                 .catch((resposta) => {
-                    mudarMostrarModal(true);
-                    mudarBotaoCarregando(false);
                     switch(resposta.code) {
                         case 'auth/user-not-found':
                             mudarMensagemErro('Usuário não encontrado.');
@@ -54,6 +52,8 @@ const LoginTela = (props) => {
                         default:
                             null
                     }
+                    mudarMostrarModal(true);
+                    mudarBotaoCarregando(false);
                 })
         } else {
             mudarBotaoCarregando(false);
@@ -165,14 +165,13 @@ const LoginTela = (props) => {
             >
                 ENTRAR COM GOOGLE
             </Button>
-            <TouchableOpacity
+            <Button
+                mode='text'
                 onPress={() => props.navigation.navigate('Cadastrar')}
-                style={{marginVertical: 20}}
+                color={'#2196F3'}
             >
-                <Text>
-                    Cadastre-se
-                </Text>
-            </TouchableOpacity>
+                CADASTRE-SE
+            </Button>
         </SafeAreaView>
     )
 }
@@ -216,7 +215,6 @@ const styles = StyleSheet.create({
     },
 
     openButton: {
-        backgroundColor: '#F194FF',
         borderRadius: 20,
         padding: 10,
         elevation: 2,
