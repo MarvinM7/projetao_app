@@ -18,42 +18,54 @@ const LivrosFavoritosTela = (props) => {
     useEffect(() => {
         props.buscarUsuario();
         //ordenar por ordem alfabética
-        db.collection('livros').where(firebase.firestore.FieldPath.documentId(), 'in', props.usuarioAtual.livros).get()
-        .then((livros) => {
-            let listaLivros = [];
-            livros.forEach((resp) => {
-                let livro = resp.data();
-                livro.id = resp.id;
-                listaLivros.push(livro);
+        if (props.usuarioAtual.livros.length > 0) {
+            db.collection('livros').where(firebase.firestore.FieldPath.documentId(), 'in', props.usuarioAtual.livros).get()
+            .then((livros) => {
+                let listaLivros = [];
+                livros.forEach((resp) => {
+                    let livro = resp.data();
+                    livro.id = resp.id;
+                    listaLivros.push(livro);
+                })
+                mudarlistaLivros(listaLivros);
+                mudarPaginaCarregada(true);
             })
-            mudarlistaLivros(listaLivros);
+            .catch((erro) => {
+                mudarPaginaCarregada(true);
+                console.log('Erro: ', erro);
+            });
+        } else {
             mudarPaginaCarregada(true);
-        })
-        .catch((erro) => {
-            console.log('Erro: ', erro);
-        });
+        }
 
         const unsubscribe = props.navigation.addListener('focus', () => {
             mudarPaginaCarregada(false);
             db.collection('usuarios').doc(firebase.auth().currentUser.uid).get()
             .then((resposta) => {
                 let usuarioResposta = resposta.data();
-                db.collection('livros').where(firebase.firestore.FieldPath.documentId(), 'in', usuarioResposta.livros).get()
-                .then((livros) => {
-                    let listaLivros = [];
-                    livros.forEach((resp) => {
-                        let livro = resp.data();
-                        livro.id = resp.id;
-                        listaLivros.push(livro);
-                    })
-                    mudarlistaLivros(listaLivros);
-                    mudarPaginaCarregada(true);
-                })
-                .catch((erro) => {
-                    console.log('teste');
-                })
+                if (usuarioResposta.livros.length > 0) {
+                    db.collection('livros').where(firebase.firestore.FieldPath.documentId(), 'in', usuarioResposta.livros).get()
+                        .then((livros) => {
+                            let listaLivros = [];
+                            livros.forEach((resp) => {
+                                let livro = resp.data();
+                                livro.id = resp.id;
+                                listaLivros.push(livro);
+                            })
+                            mudarlistaLivros(listaLivros);
+                            mudarPaginaCarregada(true);
+                        })
+                        .catch((erro) => {
+                            mudarPaginaCarregada(true);
+                            console.log('teste');
+                        })
+                } else {
+                    mudarlistaLivros([]);
+                    mudarPaginaCarregada(true); 
+                }
             })
             .catch((erro) => {
+                mudarPaginaCarregada(true);
                 console.log('Erro: ' + erro);
             })
         });
@@ -134,15 +146,21 @@ const LivrosFavoritosTela = (props) => {
                     >
                         ADICIONAR
                     </Button>
-                    <View style={{flex: 10, width: '100%'}}>
-                        <FlatList
-                            showsVerticalScrollIndicator={false}
-                            showsHorizontalScrollIndicator={false}
-                            data={listaLivros}
-                            renderItem={renderItem}
-                            keyExtractor={genero => genero.id}
-                        />
-                    </View>
+                    {listaLivros.length > 0?
+                        <View style={{flex: 10, width: '100%'}}>
+                            <FlatList
+                                showsVerticalScrollIndicator={false}
+                                showsHorizontalScrollIndicator={false}
+                                data={listaLivros}
+                                renderItem={renderItem}
+                                keyExtractor={genero => genero.id}
+                            />
+                        </View>
+                    :
+                        <View style={{width: '100%', flex: 2, alignItems: 'center', justifyContent: 'center'}}>
+                            <Title style={{color: colors.primary}}>Nenhum livro favoritado</Title>
+                        </View>
+                    }
                 </>
             :
                 <ActivityIndicator size="large" color="#00ff00" />

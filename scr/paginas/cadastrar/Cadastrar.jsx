@@ -42,7 +42,9 @@ const CadastrarTela = () => {
                         .set({
                             nome,
                             email,
-                            primeiro_acesso: true
+                            primeiro_acesso: true,
+                            livros: [],
+                            generos: []
                         })
                     usuario.user.updateProfile({
                         displayName: nome

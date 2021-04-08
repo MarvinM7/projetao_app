@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Title, useTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
@@ -9,6 +10,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 const ListaEventoTela = (props) => {
+    const { colors } = useTheme();
     const [listaEvento, mudarListaEvento] = useState([]);
 
     useEffect(() => {
@@ -84,9 +86,6 @@ const ListaEventoTela = (props) => {
             <StatusBar style="auto" />
             {props.usuarioAtual?
                 <>
-                    <Text>
-                        {`Bem vindo(a), ${props.usuarioAtual.nome}`}
-                    </Text>
                     {listaEvento.length > 0?
                         <FlatList
                             showsVerticalScrollIndicator={false}
@@ -96,7 +95,9 @@ const ListaEventoTela = (props) => {
                             keyExtractor={evento => evento.id}
                         />
                     :
-                        null
+                        <View style={{width: '100%', flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                            <Title style={{color: colors.primary}}>Nenhum evento cadastrado</Title>
+                        </View>
                     }
 
                 </>

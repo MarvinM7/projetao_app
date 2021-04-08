@@ -50,8 +50,7 @@ const App = () => {
 				mudarCarregada(true);
 				mudarLogado(false);
 			} else {
-				firebase.firestore().collection('usuarios')
-					.doc(firebase.auth().currentUser.uid).get()
+				firebase.firestore().collection('usuarios').doc(firebase.auth().currentUser.uid).get()
 					.then((snapshot) => {
 						if (snapshot.exists) {
 							if (snapshot.data().primeiro_acesso) {
@@ -61,6 +60,23 @@ const App = () => {
 							}
 							mudarLogado(true);
 							mudarCarregada(true);
+						} else {
+							let usuario = firebase.auth().currentUser;
+							firebase.firestore().collection('usuarios').doc(firebase.auth().currentUser.uid).set({
+								nome: usuario.displayName,
+								email: usuario.email,
+								generos: [],
+								livros: [],
+								primeiro_acesso: true
+							})
+							.then(() => {
+								mudarRotaLogado('GenerosFavoritosPrimeiroAcesso');
+								mudarLogado(true);
+								mudarCarregada(true);
+							})
+							.catch((resposta) => {
+								console.error("Erro: ", resposta);
+							});
 						}
 					})
 					.catch((resposta) => {
