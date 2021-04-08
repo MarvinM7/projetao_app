@@ -56,7 +56,7 @@ const GenerosFavoritosTela = (props) => {
         let listaGenerosMarcados = [];
         listaGeneros.forEach((genero) => {
             if (genero.marcado) {
-                listaGenerosMarcados.push(db.doc("autores/" + genero.id));
+                listaGenerosMarcados.push(db.doc("generos/" + genero.id));
             }
         })
 

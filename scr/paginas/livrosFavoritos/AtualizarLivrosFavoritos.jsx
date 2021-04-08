@@ -16,7 +16,6 @@ const AtualizarLivrosFavoritosTela = (props) => {
     const [listaLivros, mudarlistaLivros] = useState([]);
     const [botaoCarregando, mudarBotaoCarregando] = useState(false);
     const [texto, mudarTexto] = useState('');
-    const window = Dimensions.get('window');
     const db = firebase.firestore();
     
     useEffect(() => {
@@ -69,7 +68,7 @@ const AtualizarLivrosFavoritosTela = (props) => {
         .then(() => {
             props.buscarUsuario();
             mudarBotaoCarregando(false);
-            //props.navigation.navigate('LivrosFavoritos');
+            props.navigation.navigate('LivrosFavoritos');
         })
         .catch((erro) => {
             mudarBotaoCarregando(false);
@@ -80,6 +79,27 @@ const AtualizarLivrosFavoritosTela = (props) => {
     const buscar = () => {
         if (texto !== '') {
             db.collection('livros').where('nome', '==', texto).get()
+            .then((livros) => {
+                let listaLivros = [];
+                livros.forEach((resp) => {
+                    let livro = resp.data();
+                    livro.id = resp.id;
+                    livro.marcado = false;
+                    props.usuarioAtual.livros.forEach((livroUsuario) => {
+                        if (livro.id === livroUsuario.id) {
+                            livro.marcado = true;
+                        }
+                    })
+                    listaLivros.push(livro);
+                })
+                mudarlistaLivros(listaLivros);
+                mudarPaginaCarregada(true);
+            })
+            .catch((erro) => {
+                console.log('Erro: ', erro);
+            });
+        } else {
+            db.collection('livros').get()
             .then((livros) => {
                 let listaLivros = [];
                 livros.forEach((resp) => {

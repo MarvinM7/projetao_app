@@ -22,7 +22,6 @@ import GenerosFavoritosTela from './scr/paginas/generosFavoritos/GenerosFavorito
 import GenerosFavoritosPrimeiroAcessoTela from './scr/paginas/generosFavoritos/GenerosFavoritosPrimeiroAcesso';
 import LivrosFavoritosTela from './scr/paginas/livrosFavoritos/LivrosFavoritos';
 import AtualizarLivrosFavoritosTela from './scr/paginas/livrosFavoritos/AtualizarLivrosFavoritos';
-//import { LogBox } from 'react-native';
 
 const store = createStore(Reducers, applyMiddleware(thunk));
 
@@ -43,7 +42,6 @@ const App = () => {
 	const [rotaLogado, mudarRotaLogado] = useState('RotasLogado');
 
 	useEffect(() => {
-		//LogBox.ignoreLogs(['Setting a timer']);
 		if (firebase.apps.length === 0) {
 			firebase.initializeApp(firebaseConfig);
 		}

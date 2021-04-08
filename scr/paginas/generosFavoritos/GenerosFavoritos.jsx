@@ -59,7 +59,7 @@ const GenerosFavoritosPrimeiroAcessoTela = (props) => {
         let listaGenerosMarcados = [];
         listaGeneros.forEach((genero) => {
             if (genero.marcado) {
-                listaGenerosMarcados.push(db.doc("autores/" + genero.id));
+                listaGenerosMarcados.push(db.doc("generos/" + genero.id));
             }
         })
 
@@ -114,7 +114,6 @@ const GenerosFavoritosPrimeiroAcessoTela = (props) => {
                                     SALVAR
                                 </Button>
                             }
-                            
                         />
                     </View>
                 </>
@@ -128,7 +127,8 @@ const GenerosFavoritosPrimeiroAcessoTela = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 
     tituloView: {
