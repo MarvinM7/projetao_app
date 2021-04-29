@@ -19,9 +19,15 @@ import CadastrarTela from './scr/paginas/cadastrar/Cadastrar';
 import ResetarSenhaTela from './scr/paginas/resetarSenha/ResetarSenha';
 import RotasLogado from './scr/paginas/RotasLogado';
 import GenerosFavoritosTela from './scr/paginas/generosFavoritos/GenerosFavoritos';
-import GenerosFavoritosPrimeiroAcessoTela from './scr/paginas/generosFavoritos/GenerosFavoritosPrimeiroAcesso';
+import PrimeiroAcessoTela from './scr/paginas/primeiroAcesso/PrimeiroAcesso';
 import LivrosFavoritosTela from './scr/paginas/livrosFavoritos/LivrosFavoritos';
-import AtualizarLivrosFavoritosTela from './scr/paginas/livrosFavoritos/AtualizarLivrosFavoritos';
+import EstanteTela from './scr/paginas/estante/Estante';
+import AdicionarLivroEstanteTela from './scr/paginas/estante/AdicionarLivroEstante';
+import AtualizarLivrosEstanteTela from './scr/paginas/estante/AtualizarLivrosEstante';
+import ConfiguracoesTela from './scr/paginas/configuracoes/Configuracoes';
+import MeusDadosTela from './scr/paginas/meusDados/meusDados';
+import CriarEventoTela from './scr/paginas/evento/CriarEvento';
+import EditarEventoTela from './scr/paginas/evento/EditarEvento';
 
 const store = createStore(Reducers, applyMiddleware(thunk));
 
@@ -54,7 +60,7 @@ const App = () => {
 					.then((snapshot) => {
 						if (snapshot.exists) {
 							if (snapshot.data().primeiro_acesso) {
-								mudarRotaLogado('GenerosFavoritosPrimeiroAcesso');
+								mudarRotaLogado('PrimeiroAcesso');
 							} else {
 								mudarRotaLogado('RotasLogado');
 							}
@@ -66,11 +72,16 @@ const App = () => {
 								nome: usuario.displayName,
 								email: usuario.email,
 								generos: [],
-								livros: [],
-								primeiro_acesso: true
+								generos_top_3: [],
+								estante: [],
+								livros_top_3: [],
+								primeiro_acesso: true,
+								twitter: '',
+								instagram: '',
+								cidades: []
 							})
 							.then(() => {
-								mudarRotaLogado('GenerosFavoritosPrimeiroAcesso');
+								mudarRotaLogado('PrimeiroAcesso');
 								mudarLogado(true);
 								mudarCarregada(true);
 							})
@@ -94,7 +105,6 @@ const App = () => {
 						flex: 1,
 						justifyContent: 'center'
 					}}>
-						<StatusBar style="auto" />
 						<ActivityIndicator size="large" color="#00ff00" />
 					</SafeAreaView>
 				</PaperProvider> 
@@ -114,10 +124,16 @@ const App = () => {
 						<NavigationContainer>
 							<Stack.Navigator initialRouteName={rotaLogado}>
 								<Stack.Screen name="RotasLogado" component={RotasLogado} options={{headerShown: false}} />
-								<Stack.Screen name="GenerosFavoritosPrimeiroAcesso" component={GenerosFavoritosPrimeiroAcessoTela} options={{headerShown: false}} />
+								<Stack.Screen name="PrimeiroAcesso" component={PrimeiroAcessoTela} options={{headerShown: false}} />
 								<Stack.Screen name="GenerosFavoritos" component={GenerosFavoritosTela} options={{title: 'Meus gêneros favoritos'}} />
 								<Stack.Screen name="LivrosFavoritos" component={LivrosFavoritosTela} options={{title: 'Meus livros favoritos'}} />
-								<Stack.Screen name="AtualizarLivrosFavoritos" component={AtualizarLivrosFavoritosTela} options={{title: 'Atualizar livros favoritos'}} />
+								<Stack.Screen name="Estante" component={EstanteTela} options={{title: 'Minha estante'}} />
+								<Stack.Screen name="Configuracoes" component={ConfiguracoesTela} options={{title: 'Configurações'}} />
+								<Stack.Screen name="AdicionarLivroEstante" component={AdicionarLivroEstanteTela} options={{title: 'Adicionar livros na estante'}} />
+								<Stack.Screen name="AtualizarLivrosEstante" component={AtualizarLivrosEstanteTela} options={{title: 'Adicionar livros na estante'}} />
+								<Stack.Screen name="MeusDados" component={MeusDadosTela} options={{title: 'Meus dados'}} />
+								<Stack.Screen name="CriarEvento" component={CriarEventoTela} options={{title: 'Criar evento'}} />
+								<Stack.Screen name="EditarEvento" component={EditarEventoTela} options={{title: 'Editar evento'}} />
 							</Stack.Navigator>
 						</NavigationContainer>
 					</PaperProvider>

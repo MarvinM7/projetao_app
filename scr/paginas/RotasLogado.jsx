@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { buscarUsuario, logOut } from '../redux/acoes/Acoes';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardTela from './dashboard/Dashboard';
+import MeusMatchsTela from './meusMatchs/MeusMatchs';
 import ListaEventoTela from './evento/ListaEvento';
 import PerfilTela from './perfil/Perfil';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -31,13 +32,29 @@ const RotasLogado = (props) => {
                             )
                         }                      
                     }
-                } />
+                }
+            />
             <Tab.Screen
-                name="ListaEvento"
+                name="MeusMatchs"
+                component={MeusMatchsTela}
+                options={
+                    {
+                        title: 'Meus matchs',
+                        headerShown: false,
+                        tabBarIcon: ({ color, size }) => {
+                            return (
+                                <Ionicons name="heart" color={color} size={26} />
+                            )
+                        }                      
+                    }
+                }
+            />
+            <Tab.Screen
+                name="Eventos"
                 component={ListaEventoTela}
                 options={
                     {
-                        title: 'Lista de Eventos',
+                        title: 'Eventos',
                         headerShown: false,
                         tabBarIcon: ({ color, size }) => {
                             return (

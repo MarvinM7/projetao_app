@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-const AtualizarLivrosFavoritosTela = (props) => {
+const AtualizarLivrosEstanteTela = (props) => {
     const { colors } = useTheme();
     const [paginaCarregada, mudarPaginaCarregada] = useState(false);
     const [listaLivros, mudarlistaLivros] = useState([]);
@@ -27,8 +27,8 @@ const AtualizarLivrosFavoritosTela = (props) => {
                 let livro = resp.data();
                 livro.id = resp.id;
                 livro.marcado = false;
-                props.usuarioAtual.livros.forEach((livroUsuario) => {
-                    if (livro.id === livroUsuario.id) {
+                props.usuarioAtual.estante.forEach((livroUsuario) => {
+                    if (livro.id === livroUsuario.livro.id) {
                         livro.marcado = true;
                     }
                 })
@@ -48,7 +48,7 @@ const AtualizarLivrosFavoritosTela = (props) => {
             if (livro.id === livroCheckBox.id) {
                 livro.marcado = !livro.marcado;
             }
-            livros.push(livro)
+            livros.push(livro);
         })
         mudarlistaLivros(livros);
     }
@@ -58,17 +58,20 @@ const AtualizarLivrosFavoritosTela = (props) => {
         let listaLivrosMarcados = [];
         listaLivros.forEach((livro) => {
             if (livro.marcado) {
-                listaLivrosMarcados.push(db.doc("livros/" + livro.id));
+                listaLivrosMarcados.push({
+                    livro: db.doc("livros/" + livro.id),
+                    status_leitura: db.doc("status/5c15wdZprmVVlxkoC9pM")
+                });
             }
         })
         
         return db.collection('usuarios').doc(firebase.auth().currentUser.uid).update({
-            livros: listaLivrosMarcados
+            estante: listaLivrosMarcados
         })
         .then(() => {
             props.buscarUsuario();
             mudarBotaoCarregando(false);
-            props.navigation.navigate('LivrosFavoritos');
+            props.navigation.navigate('Estante');
         })
         .catch((erro) => {
             mudarBotaoCarregando(false);
@@ -78,20 +81,22 @@ const AtualizarLivrosFavoritosTela = (props) => {
 
     const buscar = () => {
         if (texto !== '') {
-            db.collection('livros').where('nome', '==', texto).get()
+            db.collection('livros').where('nome', '==', texto).orderBy('nome', 'asc').get()
             .then((livros) => {
                 let listaLivros = [];
                 livros.forEach((resp) => {
                     let livro = resp.data();
                     livro.id = resp.id;
                     livro.marcado = false;
-                    props.usuarioAtual.livros.forEach((livroUsuario) => {
-                        if (livro.id === livroUsuario.id) {
+                    props.usuarioAtual.estante.forEach((livroUsuario) => {
+                        if (livro.id === livroUsuario.livro.id) {
                             livro.marcado = true;
                         }
                     })
+                    
                     listaLivros.push(livro);
                 })
+                console.log(listaLivros);
                 mudarlistaLivros(listaLivros);
                 mudarPaginaCarregada(true);
             })
@@ -99,15 +104,15 @@ const AtualizarLivrosFavoritosTela = (props) => {
                 console.log('Erro: ', erro);
             });
         } else {
-            db.collection('livros').get()
+            db.collection('livros').orderBy('nome', 'asc').get()
             .then((livros) => {
                 let listaLivros = [];
                 livros.forEach((resp) => {
                     let livro = resp.data();
                     livro.id = resp.id;
                     livro.marcado = false;
-                    props.usuarioAtual.livros.forEach((livroUsuario) => {
-                        if (livro.id === livroUsuario.id) {
+                    props.usuarioAtual.estante.forEach((livroUsuario) => {
+                        if (livro.id === livroUsuario.livro.id) {
                             livro.marcado = true;
                         }
                     })
@@ -141,41 +146,37 @@ const AtualizarLivrosFavoritosTela = (props) => {
         <SafeAreaView style={[styles.container]}>
             {paginaCarregada?
                 <>
-                    <View style={{flex: 1, width: '100%', alignItems: 'center'}}>
-                        <TextInput
-                            right={
-                                <TextInput.Icon
-                                    name={() => <Ionicons name="md-search" color={colors.primary} size={26} />}
-                                    onPress={() => buscar()}
-                                />
-                            }
-                            label="Buscar"
-                            mode="outlined"
-                            value={texto}
-                            onChangeText={(texto) => mudarTexto(texto)}
-                            style={{width: '90%'}}
-                        />
-                    </View>
-                    <View style={{flex: 9, width: '100%'}}>
-                        <FlatList
-                            showsVerticalScrollIndicator={false}
-                            showsHorizontalScrollIndicator={false}
-                            data={listaLivros}
-                            renderItem={renderItem}
-                            keyExtractor={livro => livro.id}
-                            ListFooterComponent={
-                                <Button
-                                    mode="contained"
-                                    onPress={() => salvar()}
-                                    loading={botaoCarregando}
-                                    style={{width: '90%', alignSelf: 'center', marginBottom: 10}}
-                                >
-                                    SALVAR
-                                </Button>
-                            }
-                            
-                        />
-                    </View>
+                    <TextInput
+                        right={
+                            <TextInput.Icon
+                                name={() => <Ionicons name="md-search" color={colors.primary} size={26} />}
+                                onPress={() => buscar()}
+                            />
+                        }
+                        label="Buscar"
+                        mode="outlined"
+                        value={texto}
+                        onChangeText={(texto) => mudarTexto(texto)}
+                        style={{width: '90%', alignSelf: 'center', marginBottom: 10}}
+                    />
+                    <FlatList
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
+                        data={listaLivros}
+                        renderItem={renderItem}
+                        keyExtractor={livro => livro.id}
+                        ListFooterComponent={
+                            <Button
+                                mode="contained"
+                                onPress={() => salvar()}
+                                loading={botaoCarregando}
+                                style={{width: '90%', alignSelf: 'center', marginBottom: 10}}
+                            >
+                                SALVAR
+                            </Button>
+                        }
+                        
+                    />
                 </>
             :
                 <ActivityIndicator size="large" color="#00ff00" />
@@ -187,7 +188,6 @@ const AtualizarLivrosFavoritosTela = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
     },
 
     tituloView: {
@@ -208,4 +208,4 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchProps = (dispatch) => bindActionCreators({ buscarUsuario }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchProps)(AtualizarLivrosFavoritosTela);
+export default connect(mapStateToProps, mapDispatchProps)(AtualizarLivrosEstanteTela);

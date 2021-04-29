@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import * as GoogleSignIn from 'expo-google-sign-in';
 import { Button, TextInput } from 'react-native-paper';
+import logo from '../../../assets/logo.png'; 
 
 const LoginTela = (props) => {
     const [email, mudarEmail] = useState('');
@@ -91,7 +91,6 @@ const LoginTela = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="auto" />
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -116,11 +115,10 @@ const LoginTela = (props) => {
                     </View>
                 </View>
             </Modal>
-            <View
-                style={{width: 100, height: 100, backgroundColor: '#2196F3', marginBottom: 30}}
-            >
-
-            </View>
+            <Image 
+                style={{marginBottom: 30}}
+                source={logo}
+            />
             <TextInput 
                 label="E-mail"
                 mode="outlined"

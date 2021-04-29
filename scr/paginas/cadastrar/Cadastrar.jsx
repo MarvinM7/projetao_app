@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
@@ -43,8 +42,13 @@ const CadastrarTela = () => {
                             nome,
                             email,
                             primeiro_acesso: true,
-                            livros: [],
-                            generos: []
+                            estante: [],
+                            generos: [],
+                            generos_top_3: [],
+                            livros_top_3: [],
+                            twitter: '',
+                            instagram: '',
+                            cidades: []
                         })
                     usuario.user.updateProfile({
                         displayName: nome
@@ -95,7 +99,6 @@ const CadastrarTela = () => {
         <SafeAreaView
             style={styles.container}
         >
-            <StatusBar style="dark" />
             <Modal
                 animationType="slide"
                 transparent={true}
