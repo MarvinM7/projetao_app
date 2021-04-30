@@ -18,7 +18,7 @@ const ListaEventoTela = (props) => {
     const [mostrarMenu, mudarMostrarMenu] = useState(false);
     const [meusEventos, mudarMeusEventos] = useState(false);
     const [menu, mudarMenu] = useState({
-        texto: 'Todos os gêneros',
+        nome: 'Todos os gêneros',
         id: ''
     });
     const [mensagemModal, mudarMensagemModal] = useState('');
@@ -154,6 +154,27 @@ const ListaEventoTela = (props) => {
     }
 
     const selecionarMenu = (obj) => {
+        let listaEventos = [];
+        listaEvento.forEach((evento) => {
+            if (meusEventos) {
+                if (evento.criador.id === firebase.auth().currentUser.uid) {
+                    evento.mostrar = true;
+                } else {
+                    evento.mostrar = false;
+                }
+            } else {
+                evento.mostrar = true;
+            }
+
+            if (obj.id !== '') {
+                if (evento.mostrar) {
+                    if (obj.id !== evento.genero.id) {
+                        evento.mostrar = false;
+                    }
+                }
+            }
+            listaEventos.push(evento);
+        })
         mudarMenu(obj);
         fecharMenu();
     }
@@ -171,8 +192,16 @@ const ListaEventoTela = (props) => {
             } else {
                 evento.mostrar = true;
             }
+            if (menu.id !== '') {
+                if (evento.mostrar) {
+                    if (menu.id !== evento.genero.id) {
+                        evento.mostrar = false;
+                    }
+                }
+            }
             listaEventos.push(evento);
         })
+
         mudarMeusEventos(!meusEventos);
         mudarListaEvento(listaEventos);
     }
@@ -214,18 +243,18 @@ const ListaEventoTela = (props) => {
                         <Menu
                             visible={mostrarMenu}
                             onDismiss={fecharMenu}
-                            anchor={<Button onPress={abrirMenu}>{menu.texto}</Button>}>
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Todos os gêneros', id: ''})} title="Todos" />
-                            {/* <Menu.Item onPress={() => selecionarMenu({texto: 'Meus gêneros favoritos', id: ''})} title="Meus gêneros favoritos" /> */}
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Auto Ajuda', id: 'FEjoajl7XMF6Htow4uzl'})} title="Auto Ajuda" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Aventura', id: 'sINFmEZpO5iBiVpHjypw'})} title="Aventura" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Conto', id: 'Zb2jZ10e53W8xnnDD5tz'})} title="Conto" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Drama', id: 'N93R3vJEZDaxMWJ7zMLZ'})} title="Drama" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Fantasia', id: '8LYB8k19vgz2h2W7HlqN'})} title="Fantasia" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Ficção Científica', id: 'rfSwARK1ghJi3frQkZbW'})} title="Ficção Científica" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Poesia', id: 'nR9V4Ra1khlsF4V60cZB'})} title="Poesia" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Romance', id: 'z0coz0ANGSP52ow1QArl'})} title="Romance" />
-                            <Menu.Item onPress={() => selecionarMenu({texto: 'Terror', id: 'cLUGrR3awrazgjEg9xaW'})} title="Terror" />
+                            anchor={<Button onPress={abrirMenu}>{menu.nome}</Button>}>
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Todos os gêneros', id: ''})} title="Todos" />
+                            {/* <Menu.Item onPress={() => selecionarMenu({nome: 'Meus gêneros favoritos', id: ''})} title="Meus gêneros favoritos" /> */}
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Auto Ajuda', id: 'FEjoajl7XMF6Htow4uzl'})} title="Auto Ajuda" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Aventura', id: 'sINFmEZpO5iBiVpHjypw'})} title="Aventura" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Conto', id: 'Zb2jZ10e53W8xnnDD5tz'})} title="Conto" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Drama', id: 'N93R3vJEZDaxMWJ7zMLZ'})} title="Drama" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Fantasia', id: '8LYB8k19vgz2h2W7HlqN'})} title="Fantasia" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Ficção Científica', id: 'rfSwARK1ghJi3frQkZbW'})} title="Ficção Científica" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Poesia', id: 'nR9V4Ra1khlsF4V60cZB'})} title="Poesia" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Romance', id: 'z0coz0ANGSP52ow1QArl'})} title="Romance" />
+                            <Menu.Item onPress={() => selecionarMenu({nome: 'Terror', id: 'cLUGrR3awrazgjEg9xaW'})} title="Terror" />
                         </Menu>
                     </View>
                     <View
