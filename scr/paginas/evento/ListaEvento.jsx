@@ -8,6 +8,7 @@ import { buscarUsuario } from '../../redux/acoes/Acoes';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import moment from 'moment';
 
 const ListaEventoTela = (props) => {
     const { colors } = useTheme();
@@ -24,71 +25,47 @@ const ListaEventoTela = (props) => {
     const [mostrarModal, mudarMostrarModal] = useState(false);
 
     useEffect(() => {
-        props.buscarUsuario();
-        db.collection('eventos').orderBy('data', 'asc').get()
-        .then((eventos) => {
-            let listaEventos = [];
-            let listaEstabelecimentos = [];
-            eventos.forEach((resp) => {
-                let evento = resp.data();
-                evento.id = resp.id;
-                evento.mostrar = true;
-                listaEventos.push(evento);
-                listaEstabelecimentos.push(resp.data().estabelecimento.id);
-            })
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            props.buscarUsuario();
+            db.collection('eventos').orderBy('data', 'asc').get()
+                .then((eventos) => {
+                    let listaEventos = [];
+                    let listaEstabelecimentos = [];
+                    eventos.forEach((resp) => {
+                        let evento = resp.data();
+                        evento.id = resp.id;
+                        evento.mostrar = true;
+                        listaEventos.push(evento);
+                        listaEstabelecimentos.push(resp.data().estabelecimento.id);
+                    })
 
-            db.collection('estabelecimentos').where(firebase.firestore.FieldPath.documentId(), 'in', listaEstabelecimentos).get()
-            .then((estabelecimentos) => {
-                let listaEstabelecimentosAux = [];
-                estabelecimentos.forEach((resp) => {
-                    let estabelecimento = resp.data();
-                    estabelecimento.id = resp.id;
-                    listaEstabelecimentosAux.push(estabelecimento);
-                    
-                });
+                    db.collection('estabelecimentos').where(firebase.firestore.FieldPath.documentId(), 'in', listaEstabelecimentos).get()
+                    .then((estabelecimentos) => {
+                        let listaEstabelecimentosAux = [];
+                        estabelecimentos.forEach((resp) => {
+                            let estabelecimento = resp.data();
+                            estabelecimento.id = resp.id;
+                            listaEstabelecimentosAux.push(estabelecimento);
+                            
+                        });
 
-                console.log(listaEventos);
-                for (let i = 0; i < listaEventos.length; i++) {
-                    for (let j = 0; j < listaEstabelecimentosAux.length; j++) {
-                        if (listaEventos[i].estabelecimento.id === listaEstabelecimentosAux[j].id) {
-                            listaEventos[i].estabelecimentoInformacoes = listaEstabelecimentosAux[j];
-                            if (listaEventos[i].data) {
-                                let dia = listaEventos[i].data.toDate().getDate();
-                                if (dia < 10) {
-                                    dia = '0' + dia;
+                        for (let i = 0; i < listaEventos.length; i++) {
+                            for (let j = 0; j < listaEstabelecimentosAux.length; j++) {
+                                if (listaEventos[i].estabelecimento.id === listaEstabelecimentosAux[j].id) {
+                                    listaEventos[i].estabelecimentoInformacoes = listaEstabelecimentosAux[j];
                                 }
-                                let mes = listaEventos[i].data.toDate().getMonth();
-                                if (mes < 10) {
-                                    mes = '0' + mes;
-                                }
-                                let ano = listaEventos[i].data.toDate().getFullYear();
-                                let hora = listaEventos[i].data.toDate().getHours();
-                                if (hora < 10) {
-                                    hora = '0' + hora;
-                                }
-                                let minuto = listaEventos[i].data.toDate().getMinutes();
-                                if (minuto < 10) {
-                                    minuto = '0' + minuto;
-                                }
-                                let segundo = listaEventos[i].data.toDate().getSeconds();
-                                if (segundo < 10) {
-                                    segundo = '0' + segundo;
-                                }
-                                listaEventos[i].data = dia + '/' + mes + '/' + ano + ' ' + hora + ':' + minuto + ':' + segundo;
-                            } else {
-                                listaEventos[i].data = 'Sem data definida';
                             }
                         }
-                    }
-                }
-                mudarListaEvento(listaEventos);
-                mudarPaginaCarregada(true);
-            })
-        })
-        .catch((erro) => {
-            console.log('Erro: ' + erro);
+                        mudarListaEvento(listaEventos);
+                        mudarPaginaCarregada(true);
+                    })
+                })
+                .catch((erro) => {
+                    console.log('Erro: ' + erro);
+                });
         });
-    }, []);
+        return unsubscribe;
+    }, [props.navigation]);
 
     const openMaps = (evento) => {
         Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${evento.estabelecimentoInformacoes.localizacao.U},${evento.estabelecimentoInformacoes.localizacao.k}&zoom=15&query_place_id=${evento.estabelecimentoInformacoes.google_maps_id}`);
@@ -141,8 +118,7 @@ const ListaEventoTela = (props) => {
                                 onPress={() => openMaps(item)}
                             />
                         </View>
-                        
-                        <Text style={styles.title}>{`Dia/Hora: ${item.data}`}</Text>
+                        <Text style={styles.title}>{`Dia/Hora: ${moment(item.data.toDate()).format('DD/MM/YYYY hh:mm:ss')}`}</Text>
                     </View>
                 </View>
             :
@@ -199,72 +175,6 @@ const ListaEventoTela = (props) => {
         })
         mudarMeusEventos(!meusEventos);
         mudarListaEvento(listaEventos);
-    }
-
-    const atualizarLista = () => {
-        db.collection('eventos').orderBy('data', 'asc').get()
-        .then((eventos) => {
-            let listaEventos = [];
-            let listaEstabelecimentos = [];
-            eventos.forEach((resp) => {
-                let evento = resp.data();
-                evento.id = resp.id;
-                evento.mostrar = true;
-                listaEventos.push(evento);
-                listaEstabelecimentos.push(resp.data().estabelecimento.id);
-            })
-
-            db.collection('estabelecimentos').where(firebase.firestore.FieldPath.documentId(), 'in', listaEstabelecimentos).get()
-            .then((estabelecimentos) => {
-                let listaEstabelecimentosAux = [];
-                estabelecimentos.forEach((resp) => {
-                    let estabelecimento = resp.data();
-                    estabelecimento.id = resp.id;
-                    listaEstabelecimentosAux.push(estabelecimento);
-                    
-                });
-
-                console.log(listaEventos);
-                for (let i = 0; i < listaEventos.length; i++) {
-                    for (let j = 0; j < listaEstabelecimentosAux.length; j++) {
-                        if (listaEventos[i].estabelecimento.id === listaEstabelecimentosAux[j].id) {
-                            listaEventos[i].estabelecimentoInformacoes = listaEstabelecimentosAux[j];
-                            if (listaEventos[i].data) {
-                                let dia = listaEventos[i].data.toDate().getDate();
-                                if (dia < 10) {
-                                    dia = '0' + dia;
-                                }
-                                let mes = listaEventos[i].data.toDate().getMonth();
-                                if (mes < 10) {
-                                    mes = '0' + mes;
-                                }
-                                let ano = listaEventos[i].data.toDate().getFullYear();
-                                let hora = listaEventos[i].data.toDate().getHours();
-                                if (hora < 10) {
-                                    hora = '0' + hora;
-                                }
-                                let minuto = listaEventos[i].data.toDate().getMinutes();
-                                if (minuto < 10) {
-                                    minuto = '0' + minuto;
-                                }
-                                let segundo = listaEventos[i].data.toDate().getSeconds();
-                                if (segundo < 10) {
-                                    segundo = '0' + segundo;
-                                }
-                                listaEventos[i].data = dia + '/' + mes + '/' + ano + ' ' + hora + ':' + minuto + ':' + segundo;
-                            } else {
-                                listaEventos[i].data = 'Sem data definida';
-                            }
-                        }
-                    }
-                }
-                mudarListaEvento(listaEventos);
-                mudarPaginaCarregada(true);
-            })
-        })
-        .catch((erro) => {
-            console.log('Erro: ' + erro);
-        });
     }
 
     return (
@@ -331,53 +241,62 @@ const ListaEventoTela = (props) => {
                                 color={colors.primary}
                             />
                         </View>
-                        <View
-                            style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', padding: 8}}
-                        >
-                            <Ionicons 
-                                style={{marginRight: 5}}
-                                name="refresh"
-                                color={colors.primary}
-                                size={25}
-                                onPress={() => atualizarLista()}
-                            />
-                            <Ionicons 
-                                name="add-circle"
-                                color={colors.primary}
-                                size={25}
-                                onPress={() => props.navigation.navigate('CriarEvento')}
-                            />
-                        </View>
+                        {props.usuarioAtual?
+                            <>
+                                {props.usuarioAtual.cidades.length > 0?
+                                    <View
+                                        style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', padding: 8}}
+                                    >
+                                        <Ionicons 
+                                            name="add-circle"
+                                            color={colors.primary}
+                                            size={25}
+                                            onPress={() => props.navigation.navigate('CriarEvento')}
+                                        />
+                                    </View>
+                                :
+                                    null
+                                }
+                            </>
+                        :
+                            null
+                        }
                     </View>
-                    {props.usuarioAtual.cidades.length > 0?
+                    {props.usuarioAtual?
                         <>
-                            {listaEvento.length > 0?
-                                <FlatList
-                                    style={{width: '100%'}}
-                                    data={listaEvento}
-                                    renderItem={renderItem}
-                                    keyExtractor={evento => evento.id.toString()}
-                                    showsVerticalScrollIndicator={false}
-                                    showsHorizontalScrollIndicator={false}
-                                />
+                            {props.usuarioAtual.cidades.length > 0?
+                                <>
+                                    {listaEvento.length > 0?
+                                        <FlatList
+                                            style={{width: '100%'}}
+                                            data={listaEvento}
+                                            renderItem={renderItem}
+                                            keyExtractor={evento => evento.id.toString()}
+                                            showsVerticalScrollIndicator={false}
+                                            showsHorizontalScrollIndicator={false}
+                                        />
+                                    :
+                                        <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                                            <Title style={{color: colors.primary}}>Nenhum evento cadastrado</Title>
+                                        </View>
+                                    }
+                                </>
                             :
-                                <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Title style={{color: colors.primary}}>Nenhum evento cadastrado</Title>
+                                <View style={{width: '80%', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Title style={{color: colors.primary}}>Adicione cidades no seu perfil para poder visualizar os eventos</Title>
+                                    <Button
+                                        mode='contained'
+                                        onPress={() => props.navigation.navigate('MeusDados')}
+                                        style={{width: '80%', marginVertical: 20}}
+                                    >
+                                        IR PARA MEU PERFIL
+                                    </Button>
                                 </View>
                             }
                         </>
                     :
-                        <View style={{width: '80%', alignItems: 'center', justifyContent: 'center'}}>
-                            <Title style={{color: colors.primary}}>Adicione cidades no seu perfil para poder visualizar os eventos</Title>
-                            <Button
-                                mode='contained'
-                                onPress={() => props.navigation.navigate('MeusDados')}
-                                style={{width: '80%', marginVertical: 20}}
-                            >
-                                IR PARA MEU PERFIL
-                            </Button>
-                        </View>
-                    }
+                            null
+                        }
                 </>
             :
                 <ActivityIndicator size="large" color="#00ff00" />

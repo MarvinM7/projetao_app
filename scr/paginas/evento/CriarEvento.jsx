@@ -7,6 +7,8 @@ import 'firebase/firestore';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 
 const CriarEventoTela = (props) => {
     const { colors } = useTheme();
@@ -23,30 +25,43 @@ const CriarEventoTela = (props) => {
     const [mostrarMenuGenero, mudarMostrarMenuGenero] = useState(false);
     const [menuGenero, mudarMenuGenero] = useState({
         id: '',
-        texto: 'Selecione um gênero'
+        nome: 'Selecione um gênero'
     });
     const [mostrarMenuEstabelecimento, mudarMostrarMenuEstabelecimento] = useState(false);
     const [menuEstabelecimento, mudarMenuEstabelecimento] = useState({
         id: '',
         nome: 'Selecione um estabelecimento'
     });
+    const [data, mudarData] = useState(Date.now());
+    const [listaGeneros, mudarListaGeneros] = useState([]);
+    const [dataModo, mudarDataModo] = useState('date');
+    const [dataMostrar, mudarDataMostrar] = useState(false);
     
     useEffect(() => {
         props.buscarUsuario();
-        console.log(props);
         db.collection('estabelecimentos').where('cidade', 'in', props.usuarioAtual.cidades).get()
             .then((estabelecimentos) => {
-                console.log(estabelecimentos);
                 let listaEstabelecimentos = [];
                 estabelecimentos.forEach((resp) => {
                     let estabelecimento = resp.data();
                     estabelecimento.id = resp.id;
-                    console.log(estabelecimentos);
                     listaEstabelecimentos.push(estabelecimento);
                 });
-                console.log(listaEstabelecimentos)
-                mudarListaEstabelecimentos(listaEstabelecimentos);
-                mudarPaginaCarregada(true);
+                db.collection('generos').orderBy('nome', 'asc').get()
+                    .then((generos) => {
+                        let listaGenerosAux = [];
+                        generos.forEach((resp) => {
+                            let genero = resp.data();
+                            genero.id = resp.id;
+                            listaGenerosAux.push(genero);
+                        });
+                        mudarListaGeneros(listaGenerosAux);
+                        mudarListaEstabelecimentos(listaEstabelecimentos);
+                        mudarPaginaCarregada(true);
+                    })
+                    .catch((erro) => {
+                        console.log('Erro: ' + erro);
+                    })
             })
         mudarPaginaCarregada(true);
     }, []);
@@ -112,7 +127,7 @@ const CriarEventoTela = (props) => {
                 descricao,
                 genero: db.doc('generos/' + menuGenero.id),
                 estabelecimento: db.doc('estabelecimentos/' + menuEstabelecimento.id),
-                data: firebase.firestore.Timestamp.now(),
+                data: firebase.firestore.Timestamp.fromDate(data),
                 criador: db.doc('usuarios/' + firebase.auth().currentUser.uid)
             })
             .then(() => {
@@ -129,6 +144,23 @@ const CriarEventoTela = (props) => {
             mudarMostrarModal(true);
             mudarBotaoCarregando(false);
         }
+    }
+
+    const mudarDataFuncao = (event, selectedDate) => {
+        const currentDate = selectedDate || data;
+        mudarDataMostrar(false);
+        mudarData(currentDate);
+        if (event.type === 'set') {
+            if (dataModo === 'date') {
+                mudarDataModo('time');
+                mudarDataMostrar(true);
+            }
+        }
+    };
+
+    const mudarDataModoFuncao = () => {
+        mudarDataModo('date');
+        mudarDataMostrar(true);
     }
 
     return (
@@ -189,20 +221,25 @@ const CriarEventoTela = (props) => {
                                 <Button
                                     onPress={abrirMenuGenero}
                                 >
-                                    {menuGenero.texto}
+                                    {menuGenero.nome}
                                 </Button>
                             }
                         >
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Selecione um gênero', id: ''})} title="Selecione um gênero" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Auto Ajuda', id: 'FEjoajl7XMF6Htow4uzl'})} title="Auto Ajuda" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Aventura', id: 'sINFmEZpO5iBiVpHjypw'})} title="Aventura" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Conto', id: 'Zb2jZ10e53W8xnnDD5tz'})} title="Conto" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Drama', id: 'N93R3vJEZDaxMWJ7zMLZ'})} title="Drama" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Fantasia', id: '8LYB8k19vgz2h2W7HlqN'})} title="Fantasia" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Ficção Científica', id: 'rfSwARK1ghJi3frQkZbW'})} title="Ficção Científica" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Poesia', id: 'nR9V4Ra1khlsF4V60cZB'})} title="Poesia" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Romance', id: 'z0coz0ANGSP52ow1QArl'})} title="Romance" />
-                            <Menu.Item onPress={() => selecionarMenuGenero({texto: 'Terror', id: 'cLUGrR3awrazgjEg9xaW'})} title="Terror" />
+                            <Menu.Item onPress={() => selecionarMenuGenero({nome: 'Selecione um gênero', id: ''})} title="Selecione um gênero" />
+                            {listaGeneros.map((genero) => {
+                                return (
+                                    <Menu.Item
+                                        key={genero.id}
+                                        onPress={() => selecionarMenuGenero(
+                                            {
+                                                id: genero.id,
+                                                nome: genero.nome
+                                            }   
+                                        )} 
+                                        title={genero.nome}
+                                    />        
+                                )
+                            })}
                         </Menu>
 
                         <Menu
@@ -233,13 +270,24 @@ const CriarEventoTela = (props) => {
                                 )
                             })}
                         </Menu>
+                        <Button
+                            onPress={() => mudarDataModoFuncao()}
+                        >
+                            {`Data/Hora: ${moment(data).format('DD/MM/YYYY hh:mm:ss')}`}
+                        </Button>
                     </View>
-                    {/* <Button onPress={() => mudarMostrarModalData(true)} uppercase={false} mode="outlined">
-                        Pick single date
-                    </Button> */}
-                    <Text>
-                        Resolver problema da data/hora
-                    </Text>
+                    {dataMostrar?
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={data}
+                            mode={dataModo}
+                            is24Hour={true}
+                            display="default"
+                            onChange={mudarDataFuncao}
+                        />
+                    :
+                        null
+                    }
                     <Button
                         mode={'contained'}
                         onPress={() => criarEvento()}
@@ -260,7 +308,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
     },
 
     centeredView: {

@@ -16,7 +16,7 @@ const TesteTela = (props) => {
     }, []);
 
     const deslogar = async () => {
-        await GoogleSignIn.signOutAsync();
+        //await GoogleSignIn.signOutAsync();
         props.logOut();
     };
 

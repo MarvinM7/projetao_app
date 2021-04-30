@@ -147,11 +147,6 @@ const LivrosFavoritosTela = (props) => {
                     <View
                         style={{flex: 1, flexDirection: 'row'}}
                     >
-                        {/* <Ionicons 
-                            name="arrow-up"
-                            color={colors.primary}
-                            size={16}
-                        /> */}
                         <Ionicons 
                             name="list"
                             color={colors.primary}

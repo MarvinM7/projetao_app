@@ -7,6 +7,8 @@ import 'firebase/firestore';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 
 const EditarEventoTela = (props) => {
     const { colors } = useTheme();
@@ -23,7 +25,7 @@ const EditarEventoTela = (props) => {
     const [listaEstabelecimentos, mudarListaEstabelecimentos] = useState([]);
     const [mostrarMenuGenero, mudarMostrarMenuGenero] = useState(false);
     const [menuGenero, mudarMenuGenero] = useState({
-        id: '',
+        id: '0',
         texto: 'Selecione um gênero'
     });
     const [mostrarMenuEstabelecimento, mudarMostrarMenuEstabelecimento] = useState(false);
@@ -31,24 +33,15 @@ const EditarEventoTela = (props) => {
         id: '',
         nome: 'Selecione um estabelecimento'
     });
-    const listaGeneros = [
-        {id: 'FEjoajl7XMF6Htow4uzl', nome: 'Auto Ajuda'},
-        {id: 'sINFmEZpO5iBiVpHjypw', nome: 'Aventura',},
-        {id: 'Zb2jZ10e53W8xnnDD5tz', nome: 'Conto'},
-        {id: 'N93R3vJEZDaxMWJ7zMLZ', nome: 'Drama'},
-        {id: '8LYB8k19vgz2h2W7HlqN', nome: 'Fantasia'},
-        {id: 'rfSwARK1ghJi3frQkZbW', nome: 'Ficção Científica'},
-        {id: 'nR9V4Ra1khlsF4V60cZB', nome: 'Poesia'},
-        {id: 'z0coz0ANGSP52ow1QArl', nome: 'Romance'},
-        {id: 'cLUGrR3awrazgjEg9xaW', nome: 'Terror'}
-    ]
-    
+    const [data, mudarData] = useState(evento.data.toDate());
+    const [listaGeneros, mudarListaGeneros] = useState([]);
+    const [dataModo, mudarDataModo] = useState('date');
+    const [dataMostrar, mudarDataMostrar] = useState(false);
+
     useEffect(() => {
         props.buscarUsuario();
-        console.log(evento);
         db.collection('estabelecimentos').where('cidade', 'in', props.usuarioAtual.cidades).get()
             .then((estabelecimentos) => {
-                console.log(estabelecimentos);
                 let listaEstabelecimentos = [];
                 estabelecimentos.forEach((resp) => {
                     let estabelecimento = resp.data();
@@ -63,18 +56,31 @@ const EditarEventoTela = (props) => {
                         })
                     }
                 })
-                listaGeneros.forEach((genero) => {
-                    if (genero.id === evento.genero.id) {
-                        mudarMenuGenero({
-                            id: genero.id,
-                            nome: genero.nome
+
+                db.collection('generos').orderBy('nome', 'asc').get()
+                    .then((generos) => {
+                        let listaGenerosAux = [];
+                        generos.forEach((resp) => {
+                            let genero = resp.data();
+                            genero.id = resp.id;
+                            listaGenerosAux.push(genero);
+                        });
+                        listaGenerosAux.forEach((genero) => {
+                            if (genero.id === evento.genero.id) {
+                                mudarMenuGenero({
+                                    id: genero.id,
+                                    nome: genero.nome
+                                })
+                            }
                         })
-                    }
-                })
-                mudarListaEstabelecimentos(listaEstabelecimentos);
-                mudarPaginaCarregada(true);
+                        mudarListaGeneros(listaGenerosAux);
+                        mudarListaEstabelecimentos(listaEstabelecimentos);
+                        mudarPaginaCarregada(true);
+                    })
+                    .catch((erro) => {
+                        console.log('Erro: ' + erro);
+                    })
             })
-        mudarPaginaCarregada(true);
     }, []);
 
     const mudarNomeFuncao = (texto) => {
@@ -138,7 +144,7 @@ const EditarEventoTela = (props) => {
                 descricao,
                 genero: db.doc('generos/' + menuGenero.id),
                 estabelecimento: db.doc('estabelecimentos/' + menuEstabelecimento.id),
-                data: firebase.firestore.Timestamp.now(),
+                data: firebase.firestore.Timestamp.fromDate(data),
                 criador: db.doc('usuarios/' + firebase.auth().currentUser.uid)
             })
             .then(() => {
@@ -155,6 +161,23 @@ const EditarEventoTela = (props) => {
             mudarMostrarModal(true);
             mudarBotaoCarregando(false);
         }
+    }
+
+    const mudarDataFuncao = (event, selectedDate) => {
+        const currentDate = selectedDate || data;
+        mudarDataMostrar(false);
+        mudarData(currentDate);
+        if (event.type === 'set') {
+            if (dataModo === 'date') {
+                mudarDataModo('time');
+                mudarDataMostrar(true);
+            }
+        }
+    };
+
+    const mudarDataModoFuncao = () => {
+        mudarDataModo('date');
+        mudarDataMostrar(true);
     }
 
     return (
@@ -199,7 +222,6 @@ const EditarEventoTela = (props) => {
                         mode="outlined"
                         value={descricao}
                         multiline={true}
-                        textarea={true}
                         onChangeText={(texto) => mudarDescricaoFuncao(texto)}
                         style={{width: '90%', alignSelf: 'center', marginBottom: 10, height: 150}}
                         error={erroDescricao}
@@ -264,13 +286,24 @@ const EditarEventoTela = (props) => {
                                 )
                             })}
                         </Menu>
+                        <Button
+                            onPress={() => mudarDataModoFuncao()}
+                        >
+                            {`Data/Hora: ${moment(data).format('DD/MM/YYYY hh:mm:ss')}`}
+                        </Button>
                     </View>
-                    {/* <Button onPress={() => mudarMostrarModalData(true)} uppercase={false} mode="outlined">
-                        Pick single date
-                    </Button> */}
-                    <Text>
-                        Resolver problema da data/hora
-                    </Text>
+                    {dataMostrar?
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={data}
+                            mode={dataModo}
+                            is24Hour={true}
+                            display="default"
+                            onChange={mudarDataFuncao}
+                        />
+                    :
+                        null
+                    }
                     <Button
                         mode={'contained'}
                         onPress={() => atualizarEvento()}
@@ -290,8 +323,7 @@ const EditarEventoTela = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems: 'center'
     },
 
     centeredView: {

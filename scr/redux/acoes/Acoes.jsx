@@ -33,6 +33,8 @@ export function logOut() {
                     usuarioAtual: null
                 })
             })
-            .catch(error => alert('Erro ao deslogar: ' + error));
+            .catch((erro) => {
+                console.log('Erro ao deslogar: ' + erro);
+            })
     })
 }

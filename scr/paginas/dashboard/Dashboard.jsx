@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Divider, Title, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import firebase from 'firebase/app';
+import firebase, { auth } from 'firebase/app';
 import 'firebase/firestore';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -348,7 +348,6 @@ const DashboardTela = (props) => {
                                     name="radio-button-on"
                                     color={'#21f394'}
                                     size={10}
-                                    onPress={() => match(item)}
                                 />
                                 <Text
                                     style={styles.title}
@@ -378,7 +377,6 @@ const DashboardTela = (props) => {
                                     name="trophy"
                                     color={'#EDE91C'}
                                     size={15}
-                                    onPress={() => match(item)}
                                 />
                                 <Text>
                                     Top 3 gêneros
@@ -412,14 +410,35 @@ const DashboardTela = (props) => {
     );
 
     const match = (item) => {
-        let listaUsuariosAux = [];
-        listaUsuarios.forEach((usuario) => {
-            if (usuario.id !== item.id) {
-                listaUsuariosAux.push(usuario);
-            }
-        })
-
-        mudarListaUsuarios(listaUsuariosAux);
+        /* let listaUsuariosAux = [];
+        db.collection('matches').where('usuario_1', '==', 'KNyZ2Bw1TtXaPct8yRBDa6Mf0xn1').get()
+            .then((resp) => {
+                if (resp.exists) {
+                    console.log('existe. Fazer rotina');
+                    console.log(resp.data())
+                } else {
+                    console.log('não tem');
+                    db.collection('matches').add({
+                        usuario_1: firebase.auth().currentUser.uid,
+                        usuario_2: item.id,
+                        status: false
+                    })
+                    .then((resp) => {
+                        listaUsuarios.forEach((usuario) => {
+                            if (usuario.id !== item.id) {
+                                listaUsuariosAux.push(usuario);
+                            }
+                        })
+                        mudarListaUsuarios(listaUsuariosAux);
+                    })
+                    .catch((erro) => {
+                        console.log('Erro: ' + erro);
+                    })
+                }
+            })
+            .catch((erro) => {
+                console.log('Erro: ' + erro);
+            }) */
     }
 
     return (

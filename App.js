@@ -53,8 +53,8 @@ const App = () => {
 		}
 		firebase.auth().onAuthStateChanged((user) => {
 			if (!user) {
-				mudarCarregada(true);
 				mudarLogado(false);
+				mudarCarregada(true);
 			} else {
 				firebase.firestore().collection('usuarios').doc(firebase.auth().currentUser.uid).get()
 					.then((snapshot) => {
