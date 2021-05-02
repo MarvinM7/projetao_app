@@ -46,7 +46,7 @@ const LivrosFavoritosTela = (props) => {
             })
             .catch((erro) => {
                 mudarPaginaCarregada(true);
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
         } else {
             mudarPaginaCarregada(true);
@@ -67,7 +67,7 @@ const LivrosFavoritosTela = (props) => {
                 mudarlistaLivrosBuscados(listaLivros);
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
         } else {
             mudarMensagemErro('Digite alguma coisa para poder buscar');

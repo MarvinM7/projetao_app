@@ -38,7 +38,7 @@ const AtualizarLivrosEstanteTela = (props) => {
             mudarPaginaCarregada(true);
         })
         .catch((erro) => {
-            console.log('Erro: ', erro);
+            console.log('Erro: ' + erro);
         });
     }, [])
 
@@ -96,12 +96,11 @@ const AtualizarLivrosEstanteTela = (props) => {
                     
                     listaLivros.push(livro);
                 })
-                console.log(listaLivros);
                 mudarlistaLivros(listaLivros);
                 mudarPaginaCarregada(true);
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
         } else {
             db.collection('livros').orderBy('nome', 'asc').get()
@@ -122,7 +121,7 @@ const AtualizarLivrosEstanteTela = (props) => {
                 mudarPaginaCarregada(true);
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
         }
     }

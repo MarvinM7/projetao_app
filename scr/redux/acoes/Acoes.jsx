@@ -16,8 +16,8 @@ export function buscarUsuario() {
                     })
                 }
             })
-            .catch((resposta) => {
-                console.log(resposta);
+            .catch((erro) => {
+                console.log('Erro: ' + erro);
             })
     })
 }
@@ -34,7 +34,7 @@ export function logOut() {
                 })
             })
             .catch((erro) => {
-                console.log('Erro ao deslogar: ' + erro);
+                console.log('Erro: ' + erro);
             })
     })
 }

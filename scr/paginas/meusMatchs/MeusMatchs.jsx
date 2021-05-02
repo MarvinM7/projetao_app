@@ -39,6 +39,7 @@ const MeusMatchsTela = (props) => {
                                 genero.id = resp.id;
                                 listaGeneros.push(genero);
                             });
+                            console.log(listaUsuariosMatches);
                             db.collection('usuarios').where(firebase.firestore.FieldPath.documentId(), 'in', listaUsuariosMatches).get()
                                 .then((usuarios) => {
                                     let listaUsuariosAux = [];
@@ -48,7 +49,12 @@ const MeusMatchsTela = (props) => {
                                         listaUsuariosAux.push(usuario)
                                     })
 
+                                    let listaStatusLiterario = [];
                                     for (let i = 0; i < listaUsuariosAux.length; i++) {
+                                        if (listaUsuariosAux[i].status_literario) {
+                                            listaStatusLiterario.push(listaUsuariosAux[i].status_literario.id);
+                                        }
+
                                         for (let j = 0; j < listaUsuariosAux[i].generos_top_3.length; j++) {
                                             for (let k = 0; k < listaGeneros.length; k++) {
                                                 if (listaUsuariosAux[i].generos_top_3[j].id === listaGeneros[k].id) {
@@ -56,8 +62,39 @@ const MeusMatchsTela = (props) => {
                                                 }
                                             }
                                         }
+                                    }                                        
+
+                                    if (listaStatusLiterario.length > 0) {
+                                        db.collection('livros').where(firebase.firestore.FieldPath.documentId(), 'in', listaStatusLiterario).get()
+                                            .then((statusliterarios) => {
+                                                let listaStatusLiterarioAux = [];
+                                                statusliterarios.forEach((resp) => {
+                                                    let statusliterario = resp.data();
+                                                    statusliterario.id = resp.id;
+                                                    listaStatusLiterarioAux.push(statusliterario);
+                                                });
+
+                                                for (let i = 0; i < listaUsuariosAux.length; i++) {
+                                                    for (let j = 0; j < listaStatusLiterarioAux.length; j++) {
+                                                        if (listaUsuariosAux[i].status_literario) {
+                                                            if (listaStatusLiterarioAux[j].id === listaUsuariosAux[i].status_literario.id) {
+                                                                listaUsuariosAux[i].status_literario.nome = listaStatusLiterarioAux[j].nome;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                mudarListaUsuarios(listaUsuariosAux);
+                                                mudarPaginaCarregada(true);
+                                            })
+                                            .catch((erro) => {
+                                                console.log('Erro: ' + erro);
+                                            })
+                                    } else {
+                                        mudarListaUsuarios(listaUsuariosAux);
+                                        mudarPaginaCarregada(true);
                                     }
-                                    mudarListaUsuarios(listaUsuariosAux);
+                                    
                                 })
                                 .catch((erro) => {
                                     console.log('Erro: ' + erro);

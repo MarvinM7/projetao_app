@@ -61,14 +61,14 @@ const GenerosTop3Tela = (props) => {
                     })
                     .catch((erro) => {
                         mudarPaginaCarregada(true);
-                        console.log('Erro: ', erro);
+                        console.log('Erro: ' + erro);
                     });
                 } else {
                     mudarPaginaCarregada(true);
                 }
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
     }, []);
 

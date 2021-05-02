@@ -125,7 +125,7 @@ const ListaEventoTela = (props) => {
             })
             mudarListaEvento(listaEventos);
             mudarMensagemModal('Você adicionou sua presença ao evento ' + item.nome);
-            mostrarModal(true);
+            mudarMostrarModal(true);
         })
         .catch((erro) => {
             console.log('Erro: ' + erro);
@@ -145,8 +145,8 @@ const ListaEventoTela = (props) => {
                 listaEventos.push(evento);
             })
             mudarListaEvento(listaEventos);
-            mudarMensagemModal('Você adicionou sua presença ao evento ' + item.nome);
-            mostrarModal(true);
+            mudarMensagemModal('Você removeu sua presença ao evento ' + item.nome);
+            mudarMostrarModal(true);
         })
         .catch((erro) => {
             console.log('Erro: ' + erro);
@@ -196,16 +196,16 @@ const ListaEventoTela = (props) => {
                             :item.usuarioParticipando?
                                 <Ionicons 
                                     style={{marginRight: 5}}
-                                    name="remove-circle"
-                                    color={'#ff0000'}
+                                    name="checkmark-circle"
+                                    color={'#00FF00'}
                                     size={20}
                                     onPress={() => removerParticipacao(item)}
                                 />
                             :
                                 <Ionicons 
                                     style={{marginRight: 5}}
-                                    name="add-circle"
-                                    color={'#00ff00'}
+                                    name="checkmark-circle-outline"
+                                    color={'gray'}
                                     size={20}
                                     onPress={() => adicionarParticipacao(item)}
                                 />

@@ -40,7 +40,7 @@ const PrimeiroAcessoTela = (props) => {
             mudarPaginaCarregada(true);
         })
         .catch((erro) => {
-            console.log('Erro: ', erro);
+            console.log('Erro: ' + erro);
         });
     }, [])
 
@@ -147,7 +147,7 @@ const PrimeiroAcessoTela = (props) => {
                 mudarlistaLivros(listaLivros);
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
         } else {
             mudarMensagemErro('Digite alguma coisa para poder buscar');

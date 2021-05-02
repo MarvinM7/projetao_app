@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Menu, TextInput, useTheme } from 'react-native-paper';
+import { Button, Menu, TextInput, Title, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import firebase from 'firebase/app';
@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import moment from 'moment';
 
 const EditarEventoTela = (props) => {
@@ -341,14 +342,22 @@ const EditarEventoTela = (props) => {
                     :
                         null
                     }
-                    <FlatList
-                        style={{width: '90%'}}
-                        showsVerticalScrollIndicator={false}
-                        showsHorizontalScrollIndicator={false}
-                        data={listaUsuarios}
-                        renderItem={renderItem}
-                        keyExtractor={usuario => usuario.id}
-                    />
+                    <View
+                        style={{width: '90%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}
+                    >
+                        <Title>{`Pessoas confirmadas: ${listaUsuarios.length}`}</Title>
+                        {listaUsuarios.length > 0?
+                            <Ionicons 
+                                style={{marginRight: 10}}
+                                name="eye"
+                                color={colors.primary}
+                                size={20}
+                                onPress={() => props.navigation.navigate('ListaUsuarioEvento', {evento, listaUsuarios})}
+                            />
+                        :
+                            null
+                        }
+                    </View>
                     <Button
                         mode={'contained'}
                         onPress={() => atualizarEvento()}

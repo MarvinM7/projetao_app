@@ -25,7 +25,6 @@ const MeusDadosTela = (props) => {
     useEffect(() => {
         props.buscarUsuario();
         mudarNome(props.usuarioAtual.nome);
-        console.log(props.usuarioAtual);
         if (props.usuarioAtual.descricao !== '') {
             mudarDescricao(props.usuarioAtual.descricao);
         }
@@ -53,7 +52,7 @@ const MeusDadosTela = (props) => {
                 mudarPaginaCarregada(true);
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
     }, []);
 

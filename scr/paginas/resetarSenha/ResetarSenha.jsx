@@ -30,7 +30,6 @@ const ResetarSenhaTela = ({ navigation }) => {
                 navigation.navigate('Login');
             })
             .catch((resposta) => {
-                console.log(resposta.code)
                 switch(resposta.code) {
                     case 'auth/user-not-found':
                         mudarMensagemErro('Usuário não encontrado');

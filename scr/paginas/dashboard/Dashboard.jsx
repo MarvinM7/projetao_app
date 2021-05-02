@@ -96,16 +96,16 @@ const DashboardTela = (props) => {
                                         mudarPaginaCarregada(true);
                                     })
                                     .catch((erro) => {
-                                        console.log('Erro: ', erro);
+                                        console.log('Erro: ' + erro);
                                     })
                                 
                             })
                             .catch((erro) => {
-                                console.log('Erro: ', erro);
+                                console.log('Erro: ' + erro);
                             });
                     })
                     .catch((erro) => {
-                        console.log('Erro: ', erro);
+                        console.log('Erro: ' + erro);
                     });
             })
             .catch((erro) => {

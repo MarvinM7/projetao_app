@@ -81,11 +81,23 @@ const TesteTela = (props) => {
                     >
                         <Ionicons 
                             style={{marginRight: 10}}
-                            name="book"
+                            name="menu"
                             color={colors.primary}
                             size={25}
                         />
                         <Title>Minha estante</Title>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
+                        onPress={() => props.navigation.navigate('StatusLiterario')}
+                    >
+                        <Ionicons 
+                            style={{marginRight: 10}}
+                            name="book"
+                            color={colors.primary}
+                            size={25}
+                        />
+                        <Title>Status literário</Title>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}

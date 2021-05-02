@@ -36,7 +36,7 @@ const GenerosCurtidosTela = (props) => {
             mudarPaginaCarregada(true);
         })
         .catch((erro) => {
-            console.log('Erro: ', erro);
+            console.log('Erro: ' + erro);
         });
     }, [])
 

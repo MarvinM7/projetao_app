@@ -30,6 +30,8 @@ import MeusDadosTela from './scr/paginas/meusDados/meusDados';
 import CriarEventoTela from './scr/paginas/evento/CriarEvento';
 import EditarEventoTela from './scr/paginas/evento/EditarEvento';
 import UsuarioTela from './scr/paginas/usuario/Usuario';
+import ListaUsuarioEventoTela from './scr/paginas/listaUsuarioEvento/ListaUsuarioEvento';
+import StatusLiterarioTela from './scr/paginas/statusLiterario/StatusLiterario';
 
 const store = createStore(Reducers, applyMiddleware(thunk));
 
@@ -88,13 +90,13 @@ const App = () => {
 								mudarLogado(true);
 								mudarCarregada(true);
 							})
-							.catch((resposta) => {
-								console.error("Erro: ", resposta);
+							.catch((erro) => {
+								console.log('Erro: ' + erro);
 							});
 						}
 					})
-					.catch((resposta) => {
-						console.log(resposta);
+					.catch((erro) => {
+						console.log('Erro: ' + erro);
 					})
 			}
 		})
@@ -139,6 +141,8 @@ const App = () => {
 								<Stack.Screen name="CriarEvento" component={CriarEventoTela} options={{title: 'Criar evento'}} />
 								<Stack.Screen name="EditarEvento" component={EditarEventoTela} options={{title: 'Editar evento'}} />
 								<Stack.Screen name="Usuario" component={UsuarioTela} options={{title: 'Perfil'}} />
+								<Stack.Screen name="ListaUsuarioEvento" component={ListaUsuarioEventoTela} options={{title: 'Lista de presença'}} />
+								<Stack.Screen name="StatusLiterario" component={StatusLiterarioTela} options={{title: 'Status literário'}} />
 							</Stack.Navigator>
 						</NavigationContainer>
 					</PaperProvider>

@@ -135,11 +135,11 @@ const CriarEventoTela = (props) => {
                 mudarBotaoCarregando(false);
                 props.navigation.navigate('RotasLogado');
             })
-            .catch((resposta) => {
+            .catch((erro) => {
                 mudarMensagemModal('Erro ao tentar criar o evento, favor tente novamente');
                 mudarMostrarModal(true);
                 mudarBotaoCarregando(false);
-                console.error("Erro: ", resposta);
+                console.error("Erro: " + erro);
             });
         } else {
             mudarMostrarModal(true);

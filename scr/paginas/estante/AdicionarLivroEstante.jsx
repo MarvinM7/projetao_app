@@ -27,7 +27,6 @@ const AdicionarLivroEstanteTela = (props) => {
 
     const adicionarLivro = (item) => {
         mudarMostrarModalLivro(true);
-        console.log(item);
     }
 
     const openMenu = () => {
@@ -58,13 +57,12 @@ const AdicionarLivroEstanteTela = (props) => {
                 mudarPaginaCarregada(true);
             })
             .catch((erro) => {
-                console.log('Erro: ', erro);
+                console.log('Erro: ' + erro);
             });
         }
     }
 
     const renderItem = ({ item }) => {
-        console.log(item);
         return (
             <TouchableOpacity
                 style={[styles.item, {borderColor: colors.primary, borderRadius: 10, backgroundColor: item.marcado ? colors.primary : ''}]}
