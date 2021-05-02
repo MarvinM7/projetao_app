@@ -215,7 +215,7 @@ const DashboardTela = (props) => {
                     match = resp.data();
                     match.id = resp.id;
                 });
-                if (match !== {}) {
+                if (match.id) {
                     db.collection('matches').doc(match.id).update({
                         status: true
                     })    
