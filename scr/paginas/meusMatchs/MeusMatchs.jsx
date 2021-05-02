@@ -16,60 +16,64 @@ const MeusMatchsTela = (props) => {
     const db = firebase.firestore();
     
     useEffect(() => {
-        props.buscarUsuario();
-        db.collection('matches').where('status', '==', true).get()
-            .then((matches) => {
-                let listaUsuariosMatches = [];
-                matches.forEach((resp) => {
-                    let match = resp.data();
-                    match.id = resp.id;
-                    if (match.usuario_1 == firebase.auth().currentUser.uid) {
-                        listaUsuariosMatches.push(db.doc('usuarios/' + match.usuario_2));
-                    } else if (match.usuario_2 == firebase.auth().currentUser.uid) {
-                        listaUsuariosMatches.push(db.doc('usuarios/' + match.usuario_1));
-                    }
-                });
-                db.collection('generos').orderBy('nome', 'asc').get()
-                    .then((generos) => {
-                        let listaGeneros = [];
-                        generos.forEach((resp) => {
-                            let genero = resp.data();
-                            genero.id = resp.id;
-                            listaGeneros.push(genero);
-                        });
-                        db.collection('usuarios').where(firebase.firestore.FieldPath.documentId(), 'in', listaUsuariosMatches).get()
-                            .then((usuarios) => {
-                                let listaUsuariosAux = [];
-                                usuarios.forEach((resp) => {
-                                    let usuario = resp.data();
-                                    usuario.id = resp.id;
-                                    listaUsuariosAux.push(usuario)
-                                })
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            mudarPaginaCarregada(false);
+            props.buscarUsuario();
+            db.collection('matches').where('status', '==', true).get()
+                .then((matches) => {
+                    let listaUsuariosMatches = [];
+                    matches.forEach((resp) => {
+                        let match = resp.data();
+                        match.id = resp.id;
+                        if (match.usuario_1 == firebase.auth().currentUser.uid) {
+                            listaUsuariosMatches.push(db.doc('usuarios/' + match.usuario_2));
+                        } else if (match.usuario_2 == firebase.auth().currentUser.uid) {
+                            listaUsuariosMatches.push(db.doc('usuarios/' + match.usuario_1));
+                        }
+                    });
+                    db.collection('generos').orderBy('nome', 'asc').get()
+                        .then((generos) => {
+                            let listaGeneros = [];
+                            generos.forEach((resp) => {
+                                let genero = resp.data();
+                                genero.id = resp.id;
+                                listaGeneros.push(genero);
+                            });
+                            db.collection('usuarios').where(firebase.firestore.FieldPath.documentId(), 'in', listaUsuariosMatches).get()
+                                .then((usuarios) => {
+                                    let listaUsuariosAux = [];
+                                    usuarios.forEach((resp) => {
+                                        let usuario = resp.data();
+                                        usuario.id = resp.id;
+                                        listaUsuariosAux.push(usuario)
+                                    })
 
-                                for (let i = 0; i < listaUsuariosAux.length; i++) {
-                                    for (let j = 0; j < listaUsuariosAux[i].generos_top_3.length; j++) {
-                                        for (let k = 0; k < listaGeneros.length; k++) {
-                                            if (listaUsuariosAux[i].generos_top_3[j].id === listaGeneros[k].id) {
-                                                listaUsuariosAux[i].generos_top_3[j].nome = listaGeneros[k].nome;
+                                    for (let i = 0; i < listaUsuariosAux.length; i++) {
+                                        for (let j = 0; j < listaUsuariosAux[i].generos_top_3.length; j++) {
+                                            for (let k = 0; k < listaGeneros.length; k++) {
+                                                if (listaUsuariosAux[i].generos_top_3[j].id === listaGeneros[k].id) {
+                                                    listaUsuariosAux[i].generos_top_3[j].nome = listaGeneros[k].nome;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                mudarListaUsuarios(listaUsuariosAux);
-                            })
-                            .catch((erro) => {
-                                console.log('Erro: ' + erro);
-                            })
-                    })    
-                    .catch((erro) => {
-                        console.log('Erro: ' + erro);
-                    })
-            })
-            .catch((erro) => {
-                console.log('Erro: ' + erro);
-            })
-        mudarPaginaCarregada(true);
-    }, []);
+                                    mudarListaUsuarios(listaUsuariosAux);
+                                })
+                                .catch((erro) => {
+                                    console.log('Erro: ' + erro);
+                                })
+                        })    
+                        .catch((erro) => {
+                            console.log('Erro: ' + erro);
+                        })
+                })
+                .catch((erro) => {
+                    console.log('Erro: ' + erro);
+                })
+                mudarPaginaCarregada(true);
+        });
+        return unsubscribe;
+    }, [props.navigation]);
 
     const renderItem = ({ item }) => (
         <TouchableOpacity

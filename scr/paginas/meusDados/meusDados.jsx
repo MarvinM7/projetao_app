@@ -126,6 +126,24 @@ const MeusDadosTela = (props) => {
         mudarCidades(listaCidades);
     }
 
+    const mudarInstagramFuncao = (texto) => {
+        if (texto.includes('@')) {
+            mudarMensagemModal('Não precisar colocar @')
+            mudarMostrarModal(true);
+        } else {
+            mudarInstagram(texto);
+        }
+    }
+
+    const mudarTwitterFuncao = (texto) => {
+        if (texto.includes('@')) {
+            mudarMensagemModal('Não precisar colocar @')
+            mudarMostrarModal(true);
+        } else {
+            mudarTwitter(texto);
+        }
+    }
+
     return (
         <SafeAreaView style={[styles.container]}>
             {paginaCarregada?
@@ -163,14 +181,6 @@ const MeusDadosTela = (props) => {
                         style={{width: '90%', marginVertical: 8}}
                         error={erroNome}
                     />
-                    {/* <TextInput 
-                        label="Email"
-                        mode="outlined"
-                        value={email}
-                        onChangeText={(email) => mudarEmail(email)}
-                        style={{width: '80%', marginVertical: 8}}
-                        disabled={true}
-                    /> */}
                     <TextInput 
                         label="Descrição"
                         mode="outlined"
@@ -184,7 +194,7 @@ const MeusDadosTela = (props) => {
                             label="Instagram"
                             mode="outlined"
                             value={instagram}
-                            onChangeText={(instagram) => mudarInstagram(instagram)}
+                            onChangeText={(instagram) => mudarInstagramFuncao(instagram)}
                             style={{flex: 4, marginVertical: 8}}
                         />
                         <View style={{flex: 1}}>
@@ -194,7 +204,7 @@ const MeusDadosTela = (props) => {
                             label="Twitter"
                             mode="outlined"
                             value={twitter}
-                            onChangeText={(twitter) => mudarTwitter(twitter)}
+                            onChangeText={(twitter) => mudarTwitterFuncao(twitter)}
                             style={{flex: 4, marginVertical: 8}}
                         />
                     </View>

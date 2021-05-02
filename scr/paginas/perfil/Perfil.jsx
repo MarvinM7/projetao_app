@@ -87,18 +87,6 @@ const TesteTela = (props) => {
                         />
                         <Title>Minha estante</Title>
                     </TouchableOpacity>
-                    {/* <TouchableOpacity
-                        style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
-                        onPress={() => props.navigation.navigate('Configuracoes')}
-                    >
-                        <Ionicons 
-                            style={{marginRight: 10}}
-                            name="build"
-                            color={colors.primary}
-                            size={25}
-                        />
-                        <Title>Configurações</Title>
-                    </TouchableOpacity> */}
                     <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
                         onPress={() => deslogar()}

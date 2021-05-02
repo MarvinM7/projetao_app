@@ -25,8 +25,6 @@ const UsuarioTela = (props) => {
     const abrirInstagram = () => {
         Linking.openURL(`instagram://user?username=${usuario.instagram}`);
     }
-    
-    console.log(usuario);
 
     return (
         <SafeAreaView style={[styles.container]}>
@@ -96,27 +94,41 @@ const UsuarioTela = (props) => {
                             <View
                                 style={{flexDirection: 'row', alignItems: 'center', marginTop: 5}}
                             >
-                                <TouchableOpacity
-                                    onPress={() => abrirTwitter()}
-                                >
-                                    <Ionicons
-                                        style={{marginHorizontal: 5}}
-                                        name="logo-twitter"
-                                        color={colors.primary}
-                                        size={26}
-                                    />
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => abrirInstagram()}
-                                >
-                                    <Ionicons
-                                        style={{marginHorizontal: 5}}
-                                        name="logo-instagram"
-                                        color={colors.primary}
-                                        size={26}
-                                    />
-                                </TouchableOpacity>
-                            </View>
+                                {usuario.twitter || usuario.instagram?
+                                    <>
+                                        {usuario.twitter?
+                                            <TouchableOpacity
+                                                onPress={() => abrirTwitter()}
+                                            >
+                                                <Ionicons
+                                                    style={{marginHorizontal: 5}}
+                                                    name="logo-twitter"
+                                                    color={colors.primary}
+                                                    size={26}
+                                                />
+                                            </TouchableOpacity>
+                                        :
+                                            null
+                                        }
+                                        {usuario.instagram?
+                                            <TouchableOpacity
+                                                onPress={() => abrirInstagram()}
+                                            >
+                                                <Ionicons
+                                                    style={{marginHorizontal: 5}}
+                                                    name="logo-instagram"
+                                                    color={colors.primary}
+                                                    size={26}
+                                                />
+                                            </TouchableOpacity>
+                                        :
+                                            null
+                                        }
+                                    </>
+                                :
+                                    <Text>O usuário não adicionou rede social</Text>
+                                }
+                                </View>
                         </View>
                     </View>
                 </>

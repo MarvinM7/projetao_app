@@ -128,7 +128,8 @@ const CriarEventoTela = (props) => {
                 genero: db.doc('generos/' + menuGenero.id),
                 estabelecimento: db.doc('estabelecimentos/' + menuEstabelecimento.id),
                 data: firebase.firestore.Timestamp.fromDate(data),
-                criador: db.doc('usuarios/' + firebase.auth().currentUser.uid)
+                criador: db.doc('usuarios/' + firebase.auth().currentUser.uid),
+                usuarios: []
             })
             .then(() => {
                 mudarBotaoCarregando(false);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Menu, Provider, TextInput, useTheme } from 'react-native-paper';
+import { Button, Menu, TextInput, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { bindActionCreators } from 'redux';
@@ -37,6 +37,7 @@ const EditarEventoTela = (props) => {
     const [listaGeneros, mudarListaGeneros] = useState([]);
     const [dataModo, mudarDataModo] = useState('date');
     const [dataMostrar, mudarDataMostrar] = useState(false);
+    const [listaUsuarios, mudarListaUsuarios] = useState([]);
 
     useEffect(() => {
         props.buscarUsuario();
@@ -73,9 +74,35 @@ const EditarEventoTela = (props) => {
                                 })
                             }
                         })
-                        mudarListaGeneros(listaGenerosAux);
-                        mudarListaEstabelecimentos(listaEstabelecimentos);
-                        mudarPaginaCarregada(true);
+
+                        if (evento.usuarios.length > 0) {
+                            db.collection('usuarios').where(firebase.firestore.FieldPath.documentId(), 'in', evento.usuarios).get()
+                            .then((usuarios) => {
+                                let listaUsuariosAux = [];
+                                evento.usuarios.forEach((usuarioEvento) => {
+                                    usuarios.forEach((usuarioBusca) => {
+                                        if (usuarioEvento.id === usuarioBusca.id) {
+                                            let usuario = usuarioBusca.data();
+                                            usuario.id = usuarioBusca.id;
+                                            listaUsuariosAux.push(usuario);
+                                        }
+                                    })
+                                });
+
+                                mudarListaUsuarios(listaUsuariosAux);
+                                mudarListaGeneros(listaGenerosAux);
+                                mudarListaEstabelecimentos(listaEstabelecimentos);
+                                mudarPaginaCarregada(true);
+                            })
+                            .catch((erro) => {
+                                console.log('Erro: ' + erro)
+                            })
+                        } else {
+                            mudarListaGeneros(listaGenerosAux);
+                            mudarListaEstabelecimentos(listaEstabelecimentos);
+                            mudarPaginaCarregada(true);
+                        }
+                        
                     })
                     .catch((erro) => {
                         console.log('Erro: ' + erro);
@@ -179,6 +206,16 @@ const EditarEventoTela = (props) => {
         mudarDataModo('date');
         mudarDataMostrar(true);
     }
+
+    const renderItem = ({ item }) => {
+        return (
+            <View
+                style={[styles.item, {borderColor: colors.primary, borderRadius: 10}]}
+            >
+                <Text>{item.nome}</Text>
+            </View>
+        );
+    };
 
     return (
         <SafeAreaView style={[styles.container]}>
@@ -304,10 +341,18 @@ const EditarEventoTela = (props) => {
                     :
                         null
                     }
+                    <FlatList
+                        style={{width: '90%'}}
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
+                        data={listaUsuarios}
+                        renderItem={renderItem}
+                        keyExtractor={usuario => usuario.id}
+                    />
                     <Button
                         mode={'contained'}
                         onPress={() => atualizarEvento()}
-                        style={{width: '90%', marginTop: 10}}
+                        style={{width: '90%', marginVertical: 10}}
                         loading={botaoCarregando}
                     >
                         ATUALIZAR EVENTO
@@ -324,6 +369,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center'
+    },
+
+    item: {
+        backgroundColor: '#FFF',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 8,
     },
 
     centeredView: {

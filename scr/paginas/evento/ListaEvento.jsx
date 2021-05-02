@@ -37,6 +37,13 @@ const ListaEventoTela = (props) => {
                         let evento = resp.data();
                         evento.id = resp.id;
                         evento.mostrar = true;
+                        evento.usuarioParticipando = false;
+                        for (let i = 0; i < evento.usuarios.length; i++) {
+                            if (evento.usuarios[i].id === firebase.auth().currentUser.uid) {
+                                evento.usuarioParticipando = true;
+                                break;
+                            }
+                        }
                         listaEventos.push(evento);
                         listaEstabelecimentos.push(resp.data().estabelecimento.id);
                     })
@@ -104,6 +111,48 @@ const ListaEventoTela = (props) => {
         mudarMostrarModal(true);
     }
 
+    const adicionarParticipacao = (item) => {
+        db.collection('eventos').doc(item.id).update({
+            usuarios: firebase.firestore.FieldValue.arrayUnion(db.doc('usuarios/' + firebase.auth().currentUser.uid))
+        })
+        .then((resp) => {
+            let listaEventos = [];
+            listaEvento.forEach((evento) => {
+                if (evento.id === item.id) {
+                    evento.usuarioParticipando = true;
+                }
+                listaEventos.push(evento);
+            })
+            mudarListaEvento(listaEventos);
+            mudarMensagemModal('Você adicionou sua presença ao evento ' + item.nome);
+            mostrarModal(true);
+        })
+        .catch((erro) => {
+            console.log('Erro: ' + erro);
+        })
+    }
+
+    const removerParticipacao = (item) => {
+        db.collection('eventos').doc(item.id).update({
+            usuarios: firebase.firestore.FieldValue.arrayRemove(db.doc('usuarios/' + firebase.auth().currentUser.uid))
+        })
+        .then(() => {
+            let listaEventos = [];
+            listaEvento.forEach((evento) => {
+                if (evento.id === item.id) {
+                    evento.usuarioParticipando = false;
+                }
+                listaEventos.push(evento);
+            })
+            mudarListaEvento(listaEventos);
+            mudarMensagemModal('Você adicionou sua presença ao evento ' + item.nome);
+            mostrarModal(true);
+        })
+        .catch((erro) => {
+            console.log('Erro: ' + erro);
+        })
+    }
+
     const renderItem = ({ item }) => (
         <>
             {item.mostrar?
@@ -125,27 +174,43 @@ const ListaEventoTela = (props) => {
                             />
                             <Text style={styles.title}>{`Evento: ${item.nome}`}</Text>
                         </View>
-                        {item.criador.id === firebase.auth().currentUser.uid?
-                            <View
-                                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}
-                            >
+                        <View
+                            style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}
+                        >
+                            {item.criador.id === firebase.auth().currentUser.uid?
+                                <>
+                                    <Ionicons 
+                                        style={{marginRight: 5}}
+                                        name="create"
+                                        color={colors.primary}
+                                        size={20}
+                                        onPress={() => props.navigation.navigate('EditarEvento', item)}
+                                    />
+                                    <Ionicons 
+                                        name="trash"
+                                        color={colors.primary}
+                                        size={20}
+                                        onPress={() => excluirEvento(item)}
+                                    />
+                                </>
+                            :item.usuarioParticipando?
                                 <Ionicons 
                                     style={{marginRight: 5}}
-                                    name="create"
-                                    color={colors.primary}
+                                    name="remove-circle"
+                                    color={'#ff0000'}
                                     size={20}
-                                    onPress={() => props.navigation.navigate('EditarEvento', item)}
+                                    onPress={() => removerParticipacao(item)}
                                 />
+                            :
                                 <Ionicons 
-                                    name="trash"
-                                    color={colors.primary}
+                                    style={{marginRight: 5}}
+                                    name="add-circle"
+                                    color={'#00ff00'}
                                     size={20}
-                                    onPress={() => excluirEvento(item)}
+                                    onPress={() => adicionarParticipacao(item)}
                                 />
-                            </View>
-                        :
-                            null
-                        }
+                            }
+                        </View>
                     </View>
                     <Divider />
                     <View
