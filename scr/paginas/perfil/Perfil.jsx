@@ -41,7 +41,7 @@ const TesteTela = (props) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
-                        onPress={() => props.navigation.navigate('GenerosFavoritos')}
+                        onPress={() => props.navigation.navigate('GenerosCurtidos')}
                     >
                         <Ionicons 
                             style={{marginRight: 10}}
@@ -49,7 +49,19 @@ const TesteTela = (props) => {
                             color={colors.primary}
                             size={25}
                         />
-                        <Title>Gêneros favoritos</Title>
+                        <Title>Gêneros curtidos</Title>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
+                        onPress={() => props.navigation.navigate('GenerosTop3')}
+                    >
+                        <Ionicons 
+                            style={{marginRight: 10}}
+                            name="star"
+                            color={colors.primary}
+                            size={25}
+                        />
+                        <Title>Gêneros top 3</Title>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
@@ -61,7 +73,7 @@ const TesteTela = (props) => {
                             color={colors.primary}
                             size={25}
                         />
-                        <Title>Meu top 3</Title>
+                        <Title>Livros top 3</Title>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
@@ -75,7 +87,7 @@ const TesteTela = (props) => {
                         />
                         <Title>Minha estante</Title>
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
                         onPress={() => props.navigation.navigate('Configuracoes')}
                     >
@@ -86,7 +98,7 @@ const TesteTela = (props) => {
                             size={25}
                         />
                         <Title>Configurações</Title>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity
                         style={[styles.item, {alignItems: 'center', flexDirection: 'row'}]}
                         onPress={() => deslogar()}

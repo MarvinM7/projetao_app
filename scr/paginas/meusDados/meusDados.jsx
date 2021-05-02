@@ -14,7 +14,7 @@ const MeusDadosTela = (props) => {
     const [paginaCarregada, mudarPaginaCarregada] = useState(false);
     const [nome, mudarNome] = useState('');
     const [erroNome, mudarErroNome] = useState(false);
-    const [email, mudarEmail] = useState('');
+    const [descricao, mudarDescricao] = useState('');
     const [cidades, mudarCidades] = useState([]);
     const [instagram, mudarInstagram] = useState('');
     const [twitter, mudarTwitter] = useState('');
@@ -25,14 +25,16 @@ const MeusDadosTela = (props) => {
     useEffect(() => {
         props.buscarUsuario();
         mudarNome(props.usuarioAtual.nome);
-        mudarEmail(props.usuarioAtual.email);
-        if (props.usuarioAtual.instagram) {
+        console.log(props.usuarioAtual);
+        if (props.usuarioAtual.descricao !== '') {
+            mudarDescricao(props.usuarioAtual.descricao);
+        }
+        if (props.usuarioAtual.instagram !== '') {
             mudarInstagram(props.usuarioAtual.instagram);
         }
-        if (props.usuarioAtual.twitter) {
+        if (props.usuarioAtual.twitter !== '') {
             mudarTwitter(props.usuarioAtual.twitter);
         }
-        console.log(props);
         db.collection('cidades').orderBy('nome', 'asc').get()
             .then((cidades) => {
                 let listaCidades = [];
@@ -79,6 +81,7 @@ const MeusDadosTela = (props) => {
 
             db.collection('usuarios').doc(firebase.auth().currentUser.uid).update({
                 nome,
+                descricao,
                 cidades: listaCidades,
                 instagram,
                 twitter
@@ -157,38 +160,51 @@ const MeusDadosTela = (props) => {
                         mode="outlined"
                         value={nome}
                         onChangeText={(nome) => mudarNomeFuncao(nome)}
-                        style={{width: '80%', marginVertical: 8}}
+                        style={{width: '90%', marginVertical: 8}}
                         error={erroNome}
                     />
-                    <TextInput 
+                    {/* <TextInput 
                         label="Email"
                         mode="outlined"
                         value={email}
                         onChangeText={(email) => mudarEmail(email)}
                         style={{width: '80%', marginVertical: 8}}
                         disabled={true}
-                    />
+                    /> */}
                     <TextInput 
-                        label="Instagram"
+                        label="Descrição"
                         mode="outlined"
-                        value={instagram}
-                        onChangeText={(instagram) => mudarInstagram(instagram)}
-                        style={{width: '80%', marginVertical: 8}}
+                        value={descricao}
+                        multiline={true}
+                        onChangeText={(descricao) => mudarDescricao(descricao)}
+                        style={{width: '90%', marginVertical: 8, height: 100, justifyContent:"center"}}
                     />
-                    <TextInput 
-                        label="Twitter"
-                        mode="outlined"
-                        value={twitter}
-                        onChangeText={(twitter) => mudarTwitter(twitter)}
-                        style={{width: '80%', marginVertical: 8}}
-                    />
+                    <View style={{flexDirection: 'row', alignItems: 'center', width: '90%'}}>
+                        <TextInput 
+                            label="Instagram"
+                            mode="outlined"
+                            value={instagram}
+                            onChangeText={(instagram) => mudarInstagram(instagram)}
+                            style={{flex: 4, marginVertical: 8}}
+                        />
+                        <View style={{flex: 1}}>
+
+                        </View>
+                        <TextInput 
+                            label="Twitter"
+                            mode="outlined"
+                            value={twitter}
+                            onChangeText={(twitter) => mudarTwitter(twitter)}
+                            style={{flex: 4, marginVertical: 8}}
+                        />
+                    </View>
                     <View
-                        style={{width: '80%', alignItems: 'flex-start'}}
+                        style={{width: '90%', alignItems: 'flex-start'}}
                     >
                         <Title>Lista de cidades</Title>
                     </View>
                     <FlatList
-                        style={{width: '80%'}}
+                        style={{width: '90%'}}
                         data={cidades}
                         renderItem={renderItemCidades}
                         keyExtractor={livro => livro.id}
@@ -198,7 +214,7 @@ const MeusDadosTela = (props) => {
                     <Button
                         mode={'contained'}
                         onPress={() => salvar()}
-                        style={{width: '80%', marginVertical: 20}}
+                        style={{width: '90%', marginVertical: 20}}
                         loading={botaoCarregando}
                     >
                         SALVAR

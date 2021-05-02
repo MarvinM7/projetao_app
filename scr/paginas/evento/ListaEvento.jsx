@@ -15,6 +15,7 @@ const ListaEventoTela = (props) => {
     const db = firebase.firestore();
     const [paginaCarregada, mudarPaginaCarregada] = useState(false);
     const [listaEvento, mudarListaEvento] = useState([]);
+    const [listaGeneros, mudarListaGeneros] = useState([]);
     const [mostrarMenu, mudarMostrarMenu] = useState(false);
     const [meusEventos, mudarMeusEventos] = useState(false);
     const [menu, mudarMenu] = useState({
@@ -23,6 +24,7 @@ const ListaEventoTela = (props) => {
     });
     const [mensagemModal, mudarMensagemModal] = useState('');
     const [mostrarModal, mudarMostrarModal] = useState(false);
+    const [textoBotaoModal, mudarTextoBotaoModal] = useState('Fechar descrição');
 
     useEffect(() => {
         const unsubscribe = props.navigation.addListener('focus', () => {
@@ -49,15 +51,40 @@ const ListaEventoTela = (props) => {
                             
                         });
 
-                        for (let i = 0; i < listaEventos.length; i++) {
-                            for (let j = 0; j < listaEstabelecimentosAux.length; j++) {
-                                if (listaEventos[i].estabelecimento.id === listaEstabelecimentosAux[j].id) {
-                                    listaEventos[i].estabelecimentoInformacoes = listaEstabelecimentosAux[j];
+
+                        db.collection('generos').orderBy('nome', 'asc').get()
+                        .then((generos) => {
+                            let listaGenerosAux = [];
+                            generos.forEach((resp) => {
+                                let genero = resp.data();
+                                genero.id = resp.id;
+                                listaGenerosAux.push(genero);
+                            });
+                            
+
+                            for (let i = 0; i < listaEventos.length; i++) {
+                                for (let j = 0; j < listaEstabelecimentosAux.length; j++) {
+                                    if (listaEventos[i].estabelecimento.id === listaEstabelecimentosAux[j].id) {
+                                        listaEventos[i].estabelecimentoInformacoes = listaEstabelecimentosAux[j];
+                                        break;
+                                    }
+                                }
+
+                                for (let j = 0; j < listaGenerosAux.length; j++) {
+                                    if (listaEventos[i].genero.id === listaGenerosAux[j].id) {
+                                        listaEventos[i].generoInformacoes = listaGenerosAux[j];
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        mudarListaEvento(listaEventos);
-                        mudarPaginaCarregada(true);
+
+                            mudarListaGeneros(listaGenerosAux);
+                            mudarListaEvento(listaEventos);
+                            mudarPaginaCarregada(true);
+                        })
+                        .catch((erro) => {
+                            console.log('Erro: ' + erro);
+                        })
                     })
                 })
                 .catch((erro) => {
@@ -71,6 +98,12 @@ const ListaEventoTela = (props) => {
         Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${evento.estabelecimentoInformacoes.localizacao.U},${evento.estabelecimentoInformacoes.localizacao.k}&zoom=15&query_place_id=${evento.estabelecimentoInformacoes.google_maps_id}`);
     }
 
+    const mostrarDescricao = (item) => {
+        mudarMensagemModal(item.descricao);
+        mudarTextoBotaoModal('Fechar descrição');
+        mudarMostrarModal(true);
+    }
+
     const renderItem = ({ item }) => (
         <>
             {item.mostrar?
@@ -80,7 +113,18 @@ const ListaEventoTela = (props) => {
                     <View
                         style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10}}
                     >
-                        <Text style={styles.title}>{`Evento: ${item.nome}`}</Text>
+                        <View
+                            style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}
+                        >
+                            <Ionicons 
+                                style={{marginRight: 10}}
+                                name="information-circle-outline"
+                                color={colors.primary}
+                                size={20}
+                                onPress={() => mostrarDescricao(item)}
+                            />
+                            <Text style={styles.title}>{`Evento: ${item.nome}`}</Text>
+                        </View>
                         {item.criador.id === firebase.auth().currentUser.uid?
                             <View
                                 style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}
@@ -118,7 +162,8 @@ const ListaEventoTela = (props) => {
                                 onPress={() => openMaps(item)}
                             />
                         </View>
-                        <Text style={styles.title}>{`Dia/Hora: ${moment(item.data.toDate()).format('DD/MM/YYYY hh:mm:ss')}`}</Text>
+                        <Text style={[styles.title, {marginBottom: 10}]}>{`Dia/Hora: ${moment(item.data.toDate()).format('DD/MM/YYYY hh:mm:ss')}`}</Text>
+                        <Text style={styles.title}>{`Gênero: ${item.generoInformacoes.nome}`}</Text>
                     </View>
                 </View>
             :
@@ -138,9 +183,11 @@ const ListaEventoTela = (props) => {
                 })
                 mudarListaEvento(listEventosAux);
                 mudarMensagemModal('Evento excluído com sucesso');
+                mudarTextoBotaoModal('Fechar aviso');
                 mudarMostrarModal(true);
             }).catch((erro) => {
                 mudarMensagemModal('Erro ao excluir o evento: ' + erro);
+                mudarTextoBotaoModal('Fechar aviso');
                 mudarMostrarModal(true);
             });
     }
@@ -232,7 +279,7 @@ const ListaEventoTela = (props) => {
                                         mudarMensagemModal('');
                                     }}
                                 >
-                                    <Text style={styles.textStyle}>Fechar aviso</Text>
+                                    <Text style={styles.textStyle}>{textoBotaoModal}</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
@@ -243,18 +290,29 @@ const ListaEventoTela = (props) => {
                         <Menu
                             visible={mostrarMenu}
                             onDismiss={fecharMenu}
-                            anchor={<Button onPress={abrirMenu}>{menu.nome}</Button>}>
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Todos os gêneros', id: ''})} title="Todos" />
-                            {/* <Menu.Item onPress={() => selecionarMenu({nome: 'Meus gêneros favoritos', id: ''})} title="Meus gêneros favoritos" /> */}
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Auto Ajuda', id: 'FEjoajl7XMF6Htow4uzl'})} title="Auto Ajuda" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Aventura', id: 'sINFmEZpO5iBiVpHjypw'})} title="Aventura" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Conto', id: 'Zb2jZ10e53W8xnnDD5tz'})} title="Conto" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Drama', id: 'N93R3vJEZDaxMWJ7zMLZ'})} title="Drama" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Fantasia', id: '8LYB8k19vgz2h2W7HlqN'})} title="Fantasia" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Ficção Científica', id: 'rfSwARK1ghJi3frQkZbW'})} title="Ficção Científica" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Poesia', id: 'nR9V4Ra1khlsF4V60cZB'})} title="Poesia" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Romance', id: 'z0coz0ANGSP52ow1QArl'})} title="Romance" />
-                            <Menu.Item onPress={() => selecionarMenu({nome: 'Terror', id: 'cLUGrR3awrazgjEg9xaW'})} title="Terror" />
+                            anchor={
+                                <Button
+                                    onPress={abrirMenu}
+                                >
+                                    {menu.nome}
+                                </Button>
+                            }
+                        >
+                            <Menu.Item onPress={() => selecionarMenu({id: '', nome: 'Todos os gêneros'})} title="Todos" />
+                            {listaGeneros.map((genero) => {
+                                return (
+                                    <Menu.Item
+                                        key={genero.id}
+                                        onPress={() => selecionarMenu(
+                                            {
+                                                id: genero.id,
+                                                nome: genero.nome
+                                            }   
+                                        )} 
+                                        title={genero.nome}
+                                    />        
+                                )
+                            })}
                         </Menu>
                     </View>
                     <View

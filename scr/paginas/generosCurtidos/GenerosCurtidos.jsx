@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Title, useTheme } from 'react-native-paper';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
 import firebase from 'firebase/app';
@@ -8,9 +7,8 @@ import 'firebase/firestore';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { buscarUsuario } from '../../redux/acoes/Acoes';
-//import { LogBox } from 'react-native';
 
-const GenerosFavoritosPrimeiroAcessoTela = (props) => {
+const GenerosCurtidosTela = (props) => {
     const { colors } = useTheme();
     const [paginaCarregada, mudarPaginaCarregada] = useState(false);
     const [listaGeneros, mudarlistaGeneros] = useState([]);
@@ -149,4 +147,4 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchProps = (dispatch) => bindActionCreators({ buscarUsuario }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchProps)(GenerosFavoritosPrimeiroAcessoTela);
+export default connect(mapStateToProps, mapDispatchProps)(GenerosCurtidosTela);

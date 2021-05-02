@@ -40,6 +40,7 @@ const CadastrarTela = () => {
                         .doc(firebase.auth().currentUser.uid)
                         .set({
                             nome,
+                            descricao: '',
                             email,
                             primeiro_acesso: true,
                             estante: [],

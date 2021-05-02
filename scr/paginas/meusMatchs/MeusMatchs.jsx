@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Divider, Title, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { bindActionCreators } from 'redux';
@@ -72,8 +72,9 @@ const MeusMatchsTela = (props) => {
     }, []);
 
     const renderItem = ({ item }) => (
-        <View
+        <TouchableOpacity
             style={styles.item}
+            onPress={() => props.navigation.navigate('Usuario', item)}
         >
             <View
                 style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10}}
@@ -149,7 +150,7 @@ const MeusMatchsTela = (props) => {
                     }
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     return (

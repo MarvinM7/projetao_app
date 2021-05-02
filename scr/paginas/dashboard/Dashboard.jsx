@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Divider, Title, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import firebase, { auth } from 'firebase/app';
 import 'firebase/firestore';
 import { connect } from 'react-redux';
@@ -15,6 +15,8 @@ const DashboardTela = (props) => {
     const [listaUsuarios, mudarListaUsuarios] = useState([]);
     const [listaGeneros, mudarListaGeneros] = useState([]);
     const [paginaCarregada, mudarPaginaCarregada] = useState(false);
+    const [mensagemModal, mudarMensagemModal] = useState('');
+    const [mostrarModal, mudarMostrarModal] = useState(false);
 
     useEffect(() => {
         props.buscarUsuario();
@@ -206,7 +208,6 @@ const DashboardTela = (props) => {
 
     const match = (item) => {
         let listaUsuariosAux = [];
-        console.log(props.usuarioAtual)
         db.collection('matches').where('usuario_1', '==', item.id).where('usuario_2', '==', firebase.auth().currentUser.uid).get()
             .then((matches) => {
                 let match = {};
@@ -224,6 +225,8 @@ const DashboardTela = (props) => {
                                     listaUsuariosAux.push(usuario);
                                 }
                             })
+                            mudarMensagemModal(`Você deu match com ${item.nome}. Veja o perfil na tela "Meus matches".`);
+                            mudarMostrarModal(true);
                             mudarListaUsuarios(listaUsuariosAux);
                         })
                         .catch((erro) => {
@@ -259,6 +262,31 @@ const DashboardTela = (props) => {
         >
             {props.usuarioAtual?
                 <>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={mostrarModal}
+                        onRequestClose={() => {
+                            Alert.alert('Modal has been closed.');
+                        }}
+                    >
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={styles.modalText}>
+                                    {mensagemModal}
+                                </Text>
+                                <TouchableHighlight
+                                    style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                                    onPress={() => {
+                                        mudarMostrarModal(false);
+                                        mudarMensagemModal('');
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Fechar aviso</Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </Modal>
                     <Title style={{color: colors.primary}}>
                         Dê um match
                     </Title>
@@ -303,6 +331,46 @@ const styles = StyleSheet.create({
 
     textButton: {
         color: '#FFF'
+    },
+
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+
+    openButton: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
     }
 });
 

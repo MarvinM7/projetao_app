@@ -39,7 +39,7 @@ const RotasLogado = (props) => {
                 component={MeusMatchsTela}
                 options={
                     {
-                        title: 'Meus matchs',
+                        title: 'Meus matches',
                         headerShown: false,
                         tabBarIcon: ({ color, size }) => {
                             return (

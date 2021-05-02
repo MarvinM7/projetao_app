@@ -18,7 +18,8 @@ import LoginTela from './scr/paginas/login/Login';
 import CadastrarTela from './scr/paginas/cadastrar/Cadastrar';
 import ResetarSenhaTela from './scr/paginas/resetarSenha/ResetarSenha';
 import RotasLogado from './scr/paginas/RotasLogado';
-import GenerosFavoritosTela from './scr/paginas/generosFavoritos/GenerosFavoritos';
+import GenerosCurtidosTela from './scr/paginas/generosCurtidos/GenerosCurtidos';
+import GenerosTop3Tela from './scr/paginas/generosTop3/GenerosTop3';
 import PrimeiroAcessoTela from './scr/paginas/primeiroAcesso/PrimeiroAcesso';
 import LivrosFavoritosTela from './scr/paginas/livrosFavoritos/LivrosFavoritos';
 import EstanteTela from './scr/paginas/estante/Estante';
@@ -28,6 +29,7 @@ import ConfiguracoesTela from './scr/paginas/configuracoes/Configuracoes';
 import MeusDadosTela from './scr/paginas/meusDados/meusDados';
 import CriarEventoTela from './scr/paginas/evento/CriarEvento';
 import EditarEventoTela from './scr/paginas/evento/EditarEvento';
+import UsuarioTela from './scr/paginas/usuario/Usuario';
 
 const store = createStore(Reducers, applyMiddleware(thunk));
 
@@ -70,6 +72,7 @@ const App = () => {
 							let usuario = firebase.auth().currentUser;
 							firebase.firestore().collection('usuarios').doc(firebase.auth().currentUser.uid).set({
 								nome: usuario.displayName,
+								descricao: '',
 								email: usuario.email,
 								generos: [],
 								generos_top_3: [],
@@ -125,8 +128,9 @@ const App = () => {
 							<Stack.Navigator initialRouteName={rotaLogado}>
 								<Stack.Screen name="RotasLogado" component={RotasLogado} options={{headerShown: false}} />
 								<Stack.Screen name="PrimeiroAcesso" component={PrimeiroAcessoTela} options={{headerShown: false}} />
-								<Stack.Screen name="GenerosFavoritos" component={GenerosFavoritosTela} options={{title: 'Meus gêneros favoritos'}} />
-								<Stack.Screen name="LivrosFavoritos" component={LivrosFavoritosTela} options={{title: 'Meus livros favoritos'}} />
+								<Stack.Screen name="GenerosCurtidos" component={GenerosCurtidosTela} options={{title: 'Meus gêneros curtidos'}} />
+								<Stack.Screen name="GenerosTop3" component={GenerosTop3Tela} options={{title: 'Gêneros top 3'}} />
+								<Stack.Screen name="LivrosFavoritos" component={LivrosFavoritosTela} options={{title: 'Livros top 3'}} />
 								<Stack.Screen name="Estante" component={EstanteTela} options={{title: 'Minha estante'}} />
 								<Stack.Screen name="Configuracoes" component={ConfiguracoesTela} options={{title: 'Configurações'}} />
 								<Stack.Screen name="AdicionarLivroEstante" component={AdicionarLivroEstanteTela} options={{title: 'Adicionar livros na estante'}} />
@@ -134,6 +138,7 @@ const App = () => {
 								<Stack.Screen name="MeusDados" component={MeusDadosTela} options={{title: 'Meus dados'}} />
 								<Stack.Screen name="CriarEvento" component={CriarEventoTela} options={{title: 'Criar evento'}} />
 								<Stack.Screen name="EditarEvento" component={EditarEventoTela} options={{title: 'Editar evento'}} />
+								<Stack.Screen name="Usuario" component={UsuarioTela} options={{title: 'Perfil'}} />
 							</Stack.Navigator>
 						</NavigationContainer>
 					</PaperProvider>
