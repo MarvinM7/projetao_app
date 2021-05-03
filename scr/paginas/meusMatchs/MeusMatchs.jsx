@@ -39,7 +39,6 @@ const MeusMatchsTela = (props) => {
                                 genero.id = resp.id;
                                 listaGeneros.push(genero);
                             });
-                            console.log(listaUsuariosMatches);
                             db.collection('usuarios').where(firebase.firestore.FieldPath.documentId(), 'in', listaUsuariosMatches).get()
                                 .then((usuarios) => {
                                     let listaUsuariosAux = [];

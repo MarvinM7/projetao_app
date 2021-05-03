@@ -28,6 +28,7 @@ const ListaEventoTela = (props) => {
 
     useEffect(() => {
         const unsubscribe = props.navigation.addListener('focus', () => {
+            console.log(meusEventos)
             props.buscarUsuario();
             db.collection('eventos').orderBy('data', 'asc').get()
                 .then((eventos) => {
@@ -435,11 +436,11 @@ const ListaEventoTela = (props) => {
                                 </>
                             :
                                 <View style={{width: '80%', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Title style={{color: colors.primary}}>Adicione cidades no seu perfil para poder visualizar os eventos</Title>
+                                    <Title style={{color: colors.primary}}>Adicione cidades ao seu perfil para poder visualizar os eventos</Title>
                                     <Button
                                         mode='contained'
                                         onPress={() => props.navigation.navigate('MeusDados')}
-                                        style={{width: '80%', marginVertical: 20}}
+                                        style={{width: '100%', marginVertical: 20}}
                                     >
                                         IR PARA MEU PERFIL
                                     </Button>
